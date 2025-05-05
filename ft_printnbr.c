@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_printnbr.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mhaddadi <mhaddadi@student.42porto.com>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/05 14:44:50 by mhaddadi          #+#    #+#             */
+/*   Updated: 2025/05/05 15:40:23 by mhaddadi         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "ft_printf.h"
 
 int ft_printnbr(t_format *f, int n)
@@ -8,8 +20,7 @@ int ft_printnbr(t_format *f, int n)
     int     total_len;
     char    sign_char = 0;
     int     count = 0;
-
-    //fprintf(stderr, "[DEBUG] Printing int: %d\n", n);
+	
     num = ft_itoa(n);
     if (!num)
         return (0);

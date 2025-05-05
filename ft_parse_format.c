@@ -1,21 +1,32 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_parse_format.c                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mhaddadi <mhaddadi@student.42porto.com>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/05 14:23:22 by mhaddadi          #+#    #+#             */
+/*   Updated: 2025/05/05 14:29:47 by mhaddadi         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "ft_printf.h"
 
-static int	is_frag(char c)
+static int	ft_is_frag(char c)
 {
-	return (c == '-' || c == '0' || c == 'p' || c == '#' || c == '+' || c == ' ');
-}
-static int	is_specifier(char c)
-{
-	return (c == 'c' || c == 's' || c == 'd' || c == 'p' || c == 'i' || c == 'u'
-				  || c == 'x' || c == 'X' || c == '%');
+	return (c == '-' || c == '0'
+		|| c == 'p' || c == '#' || c == '+' || c == ' ');
 }
 
-t_format	ft_parse_format(const char **format)
+static int	ft_is_specifier(char c)
 {
-	t_format f;
+	return (c == 'c' || c == 's' || c == 'd' || c == 'p'
+		|| c == 'i' || c == 'u' || c == 'x' || c == 'X' || c == '%');
+}
 
-	ft_bzero(&f, sizeof(t_format));
-	while(is_flag(**format))
+static void	ft_handle_flags(const char **format, t_format f)
+{
+	while (ft_is_flag(**format))
 	{
 		if (**format == '-')
 			f.flag_minus = 1;
@@ -29,6 +40,14 @@ t_format	ft_parse_format(const char **format)
 			f.flag_space = 1;
 		(*format)++;
 	}
+}
+
+t_format	ft_parse_format(const char **format)
+{
+	t_format	f;
+
+	ft_bzero(&f, sizeof(t_format));
+	ft_handle_flags(format, f);
 	if (ft_isdigit(**format))
 	{
 		f.width = ft_atoi(*format);
@@ -43,7 +62,7 @@ t_format	ft_parse_format(const char **format)
 		while (ft_isdigit(**format))
 			(*format)++;
 	}
-	if (is_specifier(**format))
+	if (ft_is_specifier(**format))
 		f.specifier = *(*format)++;
 	return (f);
 }

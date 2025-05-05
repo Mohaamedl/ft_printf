@@ -27,7 +27,6 @@ int ft_printf(const char *format, ...)
         {
             format++;
             t_format f = ft_parse_format(&format);
-            //fprintf(stderr, "[DEBUG] Parsed format: specifier=%c, flags: -%d 0%d +%d #%d ' '%d, width=%d, precision_specified=%d, precision=%d\n", f.specifier, f.flag_minus, f.flag_zero, f.flag_plus, f.flag_hash, f.flag_space, f.width, f.precision_specified, f.precision);
             printed += ft_conversion_handler(&f, ap);
         }
         else
@@ -58,33 +57,34 @@ static int is_specifier(char c)
 t_format ft_parse_format(const char **format)
 {
     t_format f;
+	char **fmt = (char **)format;
 
     ft_bzero(&f, sizeof(t_format));
-    while (is_flag(**format))
+    while (is_flag(**fmt))
     {
-        if (**format == '-') f.flag_minus = 1;
-        if (**format == '0') f.flag_zero = 1;
-        if (**format == '#') f.flag_hash = 1;
-        if (**format == '+') f.flag_plus = 1;
-        if (**format == ' ') f.flag_space = 1;
-        (*format)++;
+        if (**fmt == '-') f.flag_minus = 1;
+        if (**fmt == '0') f.flag_zero = 1;
+        if (**fmt == '#') f.flag_hash = 1;
+        if (**fmt == '+') f.flag_plus = 1;
+        if (**fmt == ' ') f.flag_space = 1;
+        (*fmt)++;
     }
-    if (ft_isdigit(**format))
+    if (ft_isdigit(**fmt))
     {
-        f.width = ft_atoi(*format);
-        while (ft_isdigit(**format))
-            (*format)++;
+        f.width = ft_atoi(*fmt);
+        while (ft_isdigit(**fmt))
+            (*fmt)++;
     }
-    if (**format == '.')
+    if (**fmt == '.')
     {
         f.precision_specified = 1;
-        (*format)++;
-        f.precision = ft_atoi(*format);
-        while (ft_isdigit(**format))
-            (*format)++;
+        (*fmt)++;
+        f.precision = ft_atoi(*fmt);
+        while (ft_isdigit(**fmt))
+            (*fmt)++;
     }
-    if (is_specifier(**format))
-        f.specifier = *(*format)++;
+    if (is_specifier(**fmt))
+        f.specifier = *(*fmt)++;
     return (f);
 }
 
@@ -96,7 +96,6 @@ t_format ft_parse_format(const char **format)
 
 int ft_conversion_handler(t_format *f, va_list ap)
 {
-    //fprintf(stderr, "[DEBUG] Handling conversion for specifier: %c\n", f->specifier);
 	if (f->specifier == 'c')
         return (ft_printchar(f, va_arg(ap, int)));
     else if (f->specifier == 's')
@@ -113,8 +112,6 @@ int ft_conversion_handler(t_format *f, va_list ap)
         return (ft_printhex(f, va_arg(ap, unsigned int), 1));
     else if (f->specifier == '%')
         return (ft_printchar(f, '%'));
-	//if (f -> specifier == 'd')
-		//return (ft_printnbr(f, va_arg(ap, int)));
     return (0);
 }
 
@@ -218,6 +215,7 @@ int ft_printnbr(t_format *f, int n)
 
     //fprintf(stderr, "[DEBUG] Printing int: %d\n", n);
     num = ft_itoa(n);
+	//printf("number: %s", num);
     if (!num)
         return (0);
     to_free = num;
@@ -229,7 +227,6 @@ int ft_printnbr(t_format *f, int n)
         sign_char = '+';
     else if (f->flag_space)
         sign_char = ' ';
-
     if (n < 0)
         num++;
 
@@ -259,7 +256,7 @@ int ft_printnbr(t_format *f, int n)
         count += write(1, &sign_char, 1);
     count += ft_putnchar('0', precision_zeros);
     if (!(f->precision_specified && f->precision == 0 && n == 0))
-        count += write(1, num, num_len);
+        count += write(1, num, ft_strlen(num));
     if (f->flag_minus)
         count += ft_putnchar(' ', padding);
     free(to_free);
@@ -457,7 +454,7 @@ int main(void)
 
 	printf("\n--- Integers (%%d and %%i) ---\n");
 	std_ret = printf("STD: neg = %d, pos = %i\n", neg, pos);
-	ft_ret = ft_printf("FT_: neg = %d, pos = %i", neg, pos);
+	ft_ret = ft_printf("FT_: neg = %d, pos = %i\n", neg, pos);
 	printf("Return: std = %d, ft = %d\n", std_ret, ft_ret);
 
 	printf("\n--- Unsigned ---\n");
@@ -481,9 +478,9 @@ int main(void)
 	printf("Return: std = %d, ft = %d\n", std_ret, ft_ret);
 
 	printf("\n--- NULL string and NULL pointer ---\n");
-	std_ret = printf("STD: %s %p\n", NULL, NULL);
-	ft_ret = ft_printf("FT_: %s %p\n", NULL, NULL);
-	printf("Return: std = %d, ft = %d\n", std_ret, ft_ret);
+	//std_ret = printf("STD: %s %p\n", NULL, NULL);
+	//ft_ret = ft_printf("FT_: %s %p\n", NULL, NULL);
+	//printf("Return: std = %d, ft = %d\n", std_ret, ft_ret);
 
 	printf("\n--- INT Limits ---\n");
 	std_ret = printf("STD: INT_MIN = %d, INT_MAX = %d\n", INT_MIN, INT_MAX);

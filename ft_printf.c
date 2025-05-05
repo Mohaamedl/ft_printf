@@ -1,14 +1,26 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_printf.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mhaddadi <mhaddadi@student.42porto.com>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/05 14:22:39 by mhaddadi          #+#    #+#             */
+/*   Updated: 2025/05/05 14:22:44 by mhaddadi         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "ft_printf.h"
 
 int	ft_printf(const char *format, ...)
 {
-	va_list	ap;
+	va_list		ap;
 	int			printed;
 	t_format	f;
 
 	printed = 0;
 	va_start(ap, format);
-	while(*format)
+	while (*format)
 	{
 		if (*format++ == '%')
 		{
@@ -16,7 +28,7 @@ int	ft_printf(const char *format, ...)
 			printed += ft_conversion_handler(&format, app);
 		}
 		else
-			printed += write(1, format,1);
+			printed += write(1, format, 1);
 	}
 	va_end(ap);
 	return (printed);
