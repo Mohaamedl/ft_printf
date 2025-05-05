@@ -1,3 +1,5 @@
+#include "ft_printf.h"
+
 static int	is_frag(char c)
 {
 	return (c == '-' || c == '0' || c == 'p' || c == '#' || c == '+' || c == ' ');
