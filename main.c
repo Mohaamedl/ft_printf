@@ -260,7 +260,7 @@ int ft_printnbr(t_format *f, int n)
     if (f->flag_minus)
         count += ft_putnchar(' ', padding);
     free(to_free);
-    return (f->width > total_len ? f->width : total_len);
+    return (count);
 }
 
 
@@ -458,8 +458,8 @@ int main(void)
 	printf("Return: std = %d, ft = %d\n", std_ret, ft_ret);
 
 	printf("\n--- Unsigned ---\n");
-	std_ret = printf("STD: u = %u\n", u);
-	ft_ret = ft_printf("FT_: u = %u\n", u);
+	std_ret = printf("STD:, u = %u\n", u);
+	ft_ret = ft_printf("FT_:, u = %u\n", u);
 	printf("Return: std = %d, ft = %d\n", std_ret, ft_ret);
 
 	printf("\n--- Hex (lowercase) ---\n");
