@@ -12,7 +12,7 @@
 
 #include "ft_printf.h"
 
-static int	ft_is_frag(char c)
+static int	ft_is_flag(char c)
 {
 	return (c == '-' || c == '0'
 		|| c == 'p' || c == '#' || c == '+' || c == ' ');

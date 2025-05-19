@@ -12,7 +12,7 @@
 
 #include "ft_printf.h"
 
-static void	ft_set_sign_char(int n, char* sign, char *num, t_format *f,int count)
+static void	ft_set_sign_char(int n, char* sign_char, char *num, t_format *f,int count)
 {
 	sign_char = 0;
 	count = 0;

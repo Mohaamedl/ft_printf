@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "ft_printf.h"
-#include "../libft/libft.h"
 #include <stdio.h> // For debugging output
 
 int ft_printf(const char *format, ...)
@@ -302,7 +301,7 @@ int ft_printunbr(t_format *f, unsigned int n)
         count += ft_putnchar(' ', padding);
 
     free(to_free);
-    return (f->width > total_len ? f->width : total_len);
+    return (count);
 }
 
 int ft_printhex(t_format *f, unsigned int n, int uppercase)
@@ -366,7 +365,7 @@ int ft_printhex(t_format *f, unsigned int n, int uppercase)
     if (f->flag_minus)
         count += ft_putnchar(' ', padding);
 
-    return (f->width > total_len ? f->width : total_len);
+    return (count);
 }
 
 int ft_printptr(t_format *f, void *ptr)
@@ -417,7 +416,7 @@ int ft_printptr(t_format *f, void *ptr)
     if (f->flag_minus)
         count += ft_putnchar(' ', padding);
 
-    return (f->width > total_len ? f->width : total_len);
+    return (count);
 }
 
 #include <limits.h>
@@ -425,6 +424,7 @@ int ft_printptr(t_format *f, void *ptr)
 int main(void)
 {
 	int std_ret, ft_ret;
+	char *nstr = "\0";
 	char *str = "Hello";
 	char c = 'A';
 	void *ptr = str;
@@ -457,19 +457,25 @@ int main(void)
 	ft_ret = ft_printf("FT_: neg = %d, pos = %i\n", neg, pos);
 	printf("Return: std = %d, ft = %d\n", std_ret, ft_ret);
 
+	printf("\n--- Integers (%%+9d and %%+9i) ---\n");
+	std_ret = printf("STD: neg = %+9d, pos = %+9i\n", neg, pos);
+	ft_ret = ft_printf("FT_: neg = %+9d, pos = %+9i\n", neg, pos);
+	printf("Return: std = %d, ft = %d\n", std_ret, ft_ret);
+
+
 	printf("\n--- Unsigned ---\n");
 	std_ret = printf("STD:, u = %u\n", u);
 	ft_ret = ft_printf("FT_:, u = %u\n", u);
 	printf("Return: std = %d, ft = %d\n", std_ret, ft_ret);
 
 	printf("\n--- Hex (lowercase) ---\n");
-	std_ret = printf("STD: x = %x\n", pos);
-	ft_ret = ft_printf("FT_: x = %x\n", pos);
+	std_ret = printf("STD: x = %x\n", neg);
+	ft_ret = ft_printf("FT_: x = %x\n", neg);
 	printf("Return: std = %d, ft = %d\n", std_ret, ft_ret);
 
 	printf("\n--- Hex (uppercase) ---\n");
-	std_ret = printf("STD: X = %X\n", u);
-	ft_ret = ft_printf("FT_: X = %X\n", u);
+	std_ret = printf("STD: X = %X\n", neg);
+	ft_ret = ft_printf("FT_: X = %X\n", neg);
 	printf("Return: std = %d, ft = %d\n", std_ret, ft_ret);
 
 	printf("\n--- Percent ---\n");
@@ -478,9 +484,9 @@ int main(void)
 	printf("Return: std = %d, ft = %d\n", std_ret, ft_ret);
 
 	printf("\n--- NULL string and NULL pointer ---\n");
-	//std_ret = printf("STD: %s %p\n", NULL, NULL);
-	//ft_ret = ft_printf("FT_: %s %p\n", NULL, NULL);
-	//printf("Return: std = %d, ft = %d\n", std_ret, ft_ret);
+	std_ret = printf("STD: %s %p\n", nstr, NULL);
+	ft_ret = ft_printf("FT_: %s %p\n", nstr, NULL);
+	printf("Return: std = %d, ft = %d\n", std_ret, ft_ret);
 
 	printf("\n--- INT Limits ---\n");
 	std_ret = printf("STD: INT_MIN = %d, INT_MAX = %d\n", INT_MIN, INT_MAX);

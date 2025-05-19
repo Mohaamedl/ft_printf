@@ -24,8 +24,8 @@ int	ft_printf(const char *format, ...)
 	{
 		if (*format++ == '%')
 		{
-			f = ft_parse_format(&format, ap);
-			printed += ft_conversion_handler(&format, app);
+			f = ft_parse_format(&format);
+			printed += ft_conversion_handler(&f, ap);
 		}
 		else
 			printed += write(1, format, 1);
