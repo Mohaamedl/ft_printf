@@ -6,7 +6,7 @@
 /*   By: mhaddadi <mhaddadi@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 10:27:06 by mhaddadi          #+#    #+#             */
-/*   Updated: 2025/05/19 10:30:12 by mhaddadi         ###   ########.fr       */
+/*   Updated: 2025/05/19 10:27:06 by mhaddadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 /* ************************************************************************** */
 /*                                    Some LIBS                               */
 /* ************************************************************************** */
-# include "./libft/libft.h"
+# include "libft/libft.h"
 # include <stdarg.h>
 # include <unistd.h>
 # include <stdlib.h>
@@ -53,5 +53,7 @@ int				ft_printptr(t_format	*f, void *ptr);
 int				ft_printnbr(t_format *f, int);
 int				ft_printunbr(t_format *f, unsigned int);
 int				ft_printhex(t_format *f, unsigned int, int uppercase);
+int				ft_putnchar(char c, int num);
+char			*ft_uitoa(unsigned int);
 
 #endif
