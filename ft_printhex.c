@@ -1,15 +1,25 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_printhex.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mhaddadi <mhaddadi@student.42porto.com>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/27 13:43:54 by mhaddadi          #+#    #+#             */
+/*   Updated: 2025/05/27 13:47:31 by mhaddadi         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "ft_printf.h"
 
 
-int	ft_print_padding(t_format *f, int n, int padding)
+int	ft_print_padding(t_format *f, int n, int padding, int uppercase)
 {
 	int	count;
 
 	count = 0;
-    if (!f->flag_minus)
-    {
-        if (f->flag_zero && !f->precision_specified)
-        {
+	if (!f-> flag_minus && f->flag_zero && !f->precision_specified)
+	{
             if (f->flag_hash && n != 0)
 			{
 				if (uppercase)
@@ -30,7 +40,7 @@ int	ft_print_padding(t_format *f, int n, int padding)
 					count += write(1, "0x", 2);
 			}
         }
-    }	
+    
 	return (count);
 }
 
@@ -57,7 +67,8 @@ int ft_printhex(t_format *f, unsigned int n, int uppercase)
         while (tmp > 0)
         {
             buffer[i--] = hex_digits[tmp % 16];
-            tmp /= 16;
+
+		tmp /= 16;
         }
     }
     char *num = &buffer[i + 1];
@@ -96,6 +107,6 @@ int ft_printhex(t_format *f, unsigned int n, int uppercase)
     if (f->flag_minus)
         count += ft_putnchar(' ', padding);
 
-    return (f->width > total_len ? f->width : total_len);
+    return (count);
 }
 

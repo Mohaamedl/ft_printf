@@ -1,8 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_uitoa.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mhaddadi <mhaddadi@student.42porto.com>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/27 13:53:20 by mhaddadi          #+#    #+#             */
+/*   Updated: 2025/05/27 13:54:49 by mhaddadi         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "ft_printf.h"
 
 char	*ft_uitoa(unsigned int n)
 {
-	char			buffer[11]; // Max 10 digits + '\0'
+	char			buffer[11];
 	int				i;
 	char			*res;
 
@@ -19,3 +31,11 @@ char	*ft_uitoa(unsigned int n)
 	return (res);
 }
 
+/*
+#include <stdio.h>
+
+int main(void)
+{
+	printf("%s",ft_uitoa(988));
+}
+*/
