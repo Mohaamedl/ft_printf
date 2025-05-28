@@ -492,7 +492,11 @@ int main(void)
 	std_ret = printf("STD: INT_MIN = %d, INT_MAX = %d\n", INT_MIN, INT_MAX);
 	ft_ret = ft_printf("FT_: INT_MIN = %d, INT_MAX = %d\n", INT_MIN, INT_MAX);
 	printf("Return: std = %d, ft = %d\n", std_ret, ft_ret);
+	int r1 = printf("std:%+#0.-\n",42);
+	printf("r: %d", r1);
+	int r2 = ft_printf("ft:%+#0.-\n",42);
+	printf("r: %d", r2);
+
 
 	return 0;
 }
-

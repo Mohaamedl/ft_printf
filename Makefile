@@ -29,20 +29,19 @@ SRCS				= ft_printf.c ft_printnbr.c ft_printunbr.c ft_printchar.c \
 							ft_printhex.c ft_printchar.c ft_uitoa.c
 
 OBJS_DIR			= objs
-OBJS				= $(SRCS :%.c=$(OBJS_DIR)/%.o)
+OBJS				= $(SRCS :%.c=%.o)
 
 LIBFT_PATH	= ./libft
 LIBFT				= $(LIBFT_PATH)/libft.a
 
-$(OBJS_DIR)/%.o : %.c
+%.o : %.c
 	$(CC) -c $(CFLAGS) $^  -o $@
-
 
 all: $(NAME)
 
 bonus: all
 
-$(NAME): $(LIBFT) $(OBJS_DIR) $(OBJS)
+$(NAME): $(LIBFT) $(OBJS)
 	cp	$(LIBFT) $(NAME)
 			ar $(ARFLAGS) $(NAME) $(OBJS)
 
@@ -53,7 +52,7 @@ $(OBJS_DIR):
 
 clean:
 	make -C $(LIBFT_PATH) clean
-	$(RM) $(OBJS_DIR)
+	$(RM) $(OBJS)
 
 fclean: clean
 	make -C $(LIBFT_PATH) fclean

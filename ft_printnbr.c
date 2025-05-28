@@ -58,6 +58,7 @@ int	ft_printnbr(t_format *f, int n)
 	int		total_len;
 	char	sign_char;
 	int		count;
+	int		precision_zeros;
 
 	num = ft_itoa(n);
 	if (!num)
@@ -67,7 +68,13 @@ int	ft_printnbr(t_format *f, int n)
 	num_len = ft_strlen(num);
 	if (f->precision_specified && f->precision == 0 && n == 0)
 		num_len = 0;
-	int precision_zeros = (f->precision_specified && f->precision > num_len) ? f->precision - num_len : 0;
+	if (f->precision_specified && f->precision > num_len)
+		precision_zeros = f->precision - num_len;
+	else
+		precision_zeros = 0;
+		
+	//int precision_zeros = (f->precision_specified && f->precision > num_len) ? f->precision - num_len : 0;
+	
 	total_len = num_len + precision_zeros + (sign_char ? 1 : 0);
 	int padding = (f->width > total_len) ? f->width - total_len : 0;
 	if (!(f->precision_specified && f->precision == 0 && n == 0))
@@ -77,3 +84,27 @@ int	ft_printnbr(t_format *f, int n)
 	free(to_free);
 	return (count);
 }
+void ft_padding(t_format *f, int *padding, int *num_len, int *n)
+{
+	int		total_len;
+	int		precision_zeros;
+	if (f->precision_specified && f->precision == 0 && *n == 0)
+		*num_len = 0;
+	if (f->precision_specified && f->precision > *num_len)
+		precision_zeros = f->precision - *num_len;
+	else
+		precision_zeros = 0;
+	if (sign_char)
+		total_len = num_len + precision
+}
+
+
+
+
+
+
+
+
+
+
+
