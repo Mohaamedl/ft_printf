@@ -12,7 +12,7 @@
 #include "ft_printf.h"
 #include <stdio.h>
 #include <limits.h>
-
+/*
 int	main(void)
 {
 	int std_ret, ft_ret;
@@ -91,4 +91,4 @@ int	main(void)
 
 	return 0;
 }
-
+*/

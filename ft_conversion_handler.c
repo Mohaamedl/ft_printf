@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+/*
 #include "ft_printf.h"
 
 int ft_conversion_handler(t_format *f, va_list ap)
@@ -32,3 +33,4 @@ int ft_conversion_handler(t_format *f, va_list ap)
 		return (ft_printchar(f, '%'));
 	return (0);
 }
+*/

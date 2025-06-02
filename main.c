@@ -10,6 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+
+
+/*
 #include "ft_printf.h"
 #include <stdio.h> // For debugging output
 
@@ -34,14 +37,14 @@ int ft_printf(const char *format, ...)
     va_end(ap);
     return (printed);
 }
-
+*/ 
 /* ************************************************************************** */
 /*                                                                            */
 /*                              parse_format.c                                */
 /*                                                                            */
 /* ************************************************************************** */
 
-
+/* 
 static int is_flag(char c)
 {
     return (c == '-' || c == '0' || c == '.' || c == '#' || c == '+' || c == ' ');
@@ -86,13 +89,13 @@ t_format ft_parse_format(const char **format)
         f.specifier = *(*fmt)++;
     return (f);
 }
-
+*/
 /* ************************************************************************** */
 /*                            handle_conversion.c                             */
 /* ************************************************************************** */
 
 
-
+/*
 int ft_conversion_handler(t_format *f, va_list ap)
 {
 	if (f->specifier == 'c')
@@ -113,11 +116,11 @@ int ft_conversion_handler(t_format *f, va_list ap)
 		return (ft_printchar(f, '%'));
 	return (0);
 }
-
+*/
 /* ************************************************************************** */
 /*                           print_utils_bonus.c                              */
 /* ************************************************************************** */
-
+/*
 char	*ft_uitoa(unsigned int n)
 {
 	char			buffer[11]; // Max 10 digits + '\0'
@@ -505,7 +508,12 @@ int main(void)
 	//int r1 = printf("std:%+#0.\n",42);
 	//printf("r1: %d", r1);
 	//int r2 = ft_printf("ft:%+#0.\n",42);
-	//printf("r2: %d", r2);
+	printf("r2: %d", r2);
+
+
 
 	return 0;
 }
+
+
+*/ 

@@ -14,7 +14,7 @@
 
 static int	is_flag(char c)
 {
-	return (c == '-' || c == '0' || c == '.' || c == '#' || c == '+' || c == ' ');
+	return (c == '-' || c == '0' || c == '#' || c == '+' || c == ' ');
 }
 
 static int	is_specifier(char c)

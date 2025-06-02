@@ -12,53 +12,84 @@
 
 #include "ft_printf.h"
 
-int ft_printptr(t_format *f, void *ptr)
+static void	ft_ptr_to_hex(uintptr_t addr, char *buffer)
 {
-    uintptr_t addr = (uintptr_t)ptr;
-    char buffer[32];
-    char *hex_digits = "0123456789abcdef";
-    int i = 30;
-    int num_len;
-    int padding;
-    int count = 0;
+	char	*hex_digits;
+	int		i;
 
-    if (ptr == NULL)
-    {
-        ft_printstr(f, "(nil)");
-        return 5;
-    }
-    buffer[31] = '\0';
-    if (addr == 0 && (!f->precision_specified || f->precision != 0))
-        buffer[i--] = '0';
-    else
-    {
-        while (addr > 0)
-        {
-            buffer[i--] = hex_digits[addr % 16];
-            addr /= 16;
-        }
-    }
-    char *num = &buffer[i + 1];
-    num_len = ft_strlen(num);
+	hex_digits = "0123456789abcdef";
+	i = 30;
+	buffer[31] = '\0';
+	if (addr == 0)
+		buffer[i--] = '0';
+	else
+	{
+		while (addr > 0)
+		{
+			buffer[i--] = hex_digits[addr % 16];
+			addr /= 16;
+		}
+	}
+}
 
-    if (f->precision_specified && f->precision == 0 && ptr == 0)
-        num_len = 0;
+static int	ft_calculate_ptr_padding(t_format *f, char *num, void *ptr)
+{
+	int	num_len;
+	int	precision_zeros;
+	int	total_len;
 
-    int precision_zeros = (f->precision_specified && f->precision > num_len) ? f->precision - num_len : 0;
-    int total_len = num_len + precision_zeros + 2;
-    padding = (f->width > total_len) ? f->width - total_len : 0;
+	num_len = ft_strlen(num);
+	if (f->precision_specified && f->precision == 0 && ptr == 0)
+		num_len = 0;
+	precision_zeros = 0;
+	if (f->precision_specified && f->precision > num_len)
+		precision_zeros = f->precision - num_len;
+	total_len = num_len + precision_zeros + 2;
+	if (f->width > total_len)
+		return (f->width - total_len);
+	return (0);
+}
 
-    if (!f->flag_minus)
-        count += ft_putnchar(' ', padding);
+int	ft_print_ptr_content(t_format *f, char *num, void *ptr)
+{
+	int	count;
+	int	num_len;
+	int	precision_zeros;
 
-    count += write(1, "0x", 2);
-    count += ft_putnchar('0', precision_zeros);
-    if (!(f->precision_specified && f->precision == 0 && ptr == 0))
-        count += write(1, num, num_len);
+	count = 0;
+	num_len = ft_strlen(num);
+	if (f->precision_specified && f->precision == 0 && ptr == 0)
+		num_len = 0;
+	precision_zeros = 0;
+	if (f->precision_specified && f->precision > num_len)
+		precision_zeros = f->precision - num_len;
+	count += ft_putnchar('0', precision_zeros);
+	if (!(f->precision_specified && f->precision == 0 && ptr == 0))
+		count += write(1, num, num_len);
+	return (count);
+}
 
-    if (f->flag_minus)
-        count += ft_putnchar(' ', padding);
+int	ft_printptr(t_format *f, void *ptr)
+{
+	uintptr_t	addr;
+	char		buffer[32];
+	char		*num;
+	int			count;
 
-    return (count);
+	if (ptr == NULL)
+		return (ft_printstr(f, "(nil)"));
+	count = 0;
+	addr = (uintptr_t)ptr;
+	ft_ptr_to_hex(addr, buffer);
+	num = &buffer[0];
+	while (*num == '\0')
+		num++;
+	if (!f->flag_minus)
+		count += ft_putnchar(' ', ft_calculate_ptr_padding(f, num, ptr));
+	count += write(1, "0x", 2);
+	count += ft_print_ptr_content(f, num, ptr);
+	if (f->flag_minus)
+		count += ft_putnchar(' ', ft_calculate_ptr_padding(f, num, ptr));
+	return (count);
 }
 
