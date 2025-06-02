@@ -97,21 +97,21 @@ int ft_conversion_handler(t_format *f, va_list ap)
 {
 	if (f->specifier == 'c')
         return (ft_printchar(f, va_arg(ap, int)));
-    else if (f->specifier == 's')
-        return (ft_printstr(f, va_arg(ap, char *)));
-    else if (f->specifier == 'p')
-        return (ft_printptr(f, va_arg(ap, void *)));
-    else if (f->specifier == 'd' || f->specifier == 'i')
-        return (ft_printnbr(f, va_arg(ap, int)));
-    else if (f->specifier == 'u')
-        return (ft_printunbr(f, va_arg(ap, unsigned int)));
-    else if (f->specifier == 'x')
-        return (ft_printhex(f, va_arg(ap, unsigned int), 0));
-    else if (f->specifier == 'X')
-        return (ft_printhex(f, va_arg(ap, unsigned int), 1));
-    else if (f->specifier == '%')
-        return (ft_printchar(f, '%'));
-    return (0);
+	else if (f->specifier == 's')
+		return (ft_printstr(f, va_arg(ap, char *)));
+	else if (f->specifier == 'p')
+		return (ft_printptr(f, va_arg(ap, void *)));
+	else if (f->specifier == 'd' || f->specifier == 'i')
+		return (ft_printnbr(f, va_arg(ap, int)));
+	else if (f->specifier == 'u')
+		return (ft_printunbr(f, va_arg(ap, unsigned int)));
+	else if (f->specifier == 'x')
+		return (ft_printhex(f, va_arg(ap, unsigned int), 0));
+	else if (f->specifier == 'X')
+		return (ft_printhex(f, va_arg(ap, unsigned int), 1));
+	else if (f->specifier == '%')
+		return (ft_printchar(f, '%'));
+	return (0);
 }
 
 /* ************************************************************************** */
@@ -227,7 +227,10 @@ int ft_printnbr(t_format *f, int n)
     else if (f->flag_space)
         sign_char = ' ';
     if (n < 0)
-        num++;
+	{
+		num++;
+		num_len--;
+	}
 
     if (f->precision_specified && f->precision == 0 && n == 0)
         num_len = 0;
@@ -249,6 +252,7 @@ int ft_printnbr(t_format *f, int n)
             count += ft_putnchar(' ', padding);
             if (sign_char)
                 count += write(1, &sign_char, 1);
+			//count += ft_putnchar(' ', padding);
         }
     }
     else if (sign_char)
@@ -457,13 +461,19 @@ int main(void)
 	ft_ret = ft_printf("FT_: neg = %d, pos = %i\n", neg, pos);
 	printf("Return: std = %d, ft = %d\n", std_ret, ft_ret);
 
-	printf("\n--- Integers (%%+9d and %%+9i) ---\n");
-	std_ret = printf("STD: neg = %+9d, pos = %+9i\n", neg, pos);
-	ft_ret = ft_printf("FT_: neg = %+9d, pos = %+9i\n", neg, pos);
+	printf("\n--- Integers (%%+10d and %%+10i) ---\n");
+	std_ret = printf("STD: neg = %+10.2d, pos = %+10.2i\n", neg, pos);
+	ft_ret = ft_printf("FT_: neg = %+10.2d, pos = %+10.2i\n", neg, pos);
+	printf("Return: std = %d, ft = %d\n", std_ret, ft_ret);
+
+	printf("\n--- Integers (%%+09d and %%+09i) ---\n");
+	std_ret = printf("STD: neg = %+09d, pos = %+09i\n", neg, pos);
+	ft_ret = ft_printf("FT_: neg = %+09d, pos = %+09i\n", neg, pos);
 	printf("Return: std = %d, ft = %d\n", std_ret, ft_ret);
 
 
-	printf("\n--- Unsigned ---\n");
+
+	printf("\n--- Unsigned u---\n");
 	std_ret = printf("STD:, u = %u\n", u);
 	ft_ret = ft_printf("FT_:, u = %u\n", u);
 	printf("Return: std = %d, ft = %d\n", std_ret, ft_ret);
@@ -492,11 +502,10 @@ int main(void)
 	std_ret = printf("STD: INT_MIN = %d, INT_MAX = %d\n", INT_MIN, INT_MAX);
 	ft_ret = ft_printf("FT_: INT_MIN = %d, INT_MAX = %d\n", INT_MIN, INT_MAX);
 	printf("Return: std = %d, ft = %d\n", std_ret, ft_ret);
-	int r1 = printf("std:%+#0.-\n",42);
-	printf("r: %d", r1);
-	int r2 = ft_printf("ft:%+#0.-\n",42);
-	printf("r: %d", r2);
-
+	//int r1 = printf("std:%+#0.\n",42);
+	//printf("r1: %d", r1);
+	//int r2 = ft_printf("ft:%+#0.\n",42);
+	//printf("r2: %d", r2);
 
 	return 0;
 }

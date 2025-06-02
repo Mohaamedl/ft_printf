@@ -30,12 +30,25 @@ char	*ft_uitoa(unsigned int n)
 	res = ft_strdup(&buffer[i + 1]);
 	return (res);
 }
-
 /*
+
 #include <stdio.h>
 
 int main(void)
 {
-	printf("%s",ft_uitoa(988));
+	printf("%s\n",ft_uitoa(42));
+	printf("%s\n",ft_uitoa(0));
+	printf("%s\n",ft_uitoa(2147483648));
+	printf("%s\n",ft_uitoa(4294967295));
+	//printf("%s",ft_uitoa(4294967296));
+	//printf("%s",ft_uitoa(9999999999));
+	printf("%s\n",ft_uitoa(00000));
+	printf("%s\n",ft_uitoa(000001));
+
+
+
+
+
+
 }
 */

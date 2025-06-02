@@ -29,3 +29,12 @@ int	ft_printchar(t_format *f, int c)
 		count += ft_putnchar(' ', padding);
 	return (count);
 }
+#include <stdio.h>
+
+int main(void)
+{
+	t_format f;
+	
+	int d = ft_printchar(&f, '1');
+	printf("%d", d);
+}
