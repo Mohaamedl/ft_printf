@@ -12,57 +12,53 @@
 
 #include "ft_printf.h"
 
-static int	ft_is_flag(char c)
+static int	is_flag(char c)
 {
-	return (c == '-' || c == '0'
-		|| c == 'p' || c == '#' || c == '+' || c == ' ');
+	return (c == '-' || c == '0' || c == '.' || c == '#' || c == '+' || c == ' ');
 }
 
-static int	ft_is_specifier(char c)
+static int	is_specifier(char c)
 {
-	return (c == 'c' || c == 's' || c == 'd' || c == 'p'
-		|| c == 'i' || c == 'u' || c == 'x' || c == 'X' || c == '%');
-}
-
-static void	ft_handle_flags(const char **format, t_format f)
-{
-	while (ft_is_flag(**format))
-	{
-		if (**format == '-')
-			f.flag_minus = 1;
-		if (**format == '0')
-			f.flag_zero = 1;
-		if (**format == '#')
-			f.flag_hash = 1;
-		if (**format == '+')
-			f.flag_plus = 1;
-		if (**format == ' ')
-			f.flag_space = 1;
-		(*format)++;
-	}
+	return (c == 'c' || c == 's' || c == 'p' || c == 'd' || c == 'i' || c == 'u'
+		|| c == 'x' || c == 'X' || c == '%');
 }
 
 t_format	ft_parse_format(const char **format)
 {
 	t_format	f;
+	char		**fmt;
 
+	fmt = (char **)format;
 	ft_bzero(&f, sizeof(t_format));
-	ft_handle_flags(format, f);
-	if (ft_isdigit(**format))
+	while (is_flag(**fmt))
 	{
-		f.width = ft_atoi(*format);
-		while (ft_isdigit(**format))
-			(*format)++;
+		if (**fmt == '-')
+			f.flag_minus = 1;
+		if (**fmt == '0')
+			f.flag_zero = 1;
+		if (**fmt == '#')
+			f.flag_hash = 1;
+		if (**fmt == '+')
+			f.flag_plus = 1;
+		if (**fmt == ' ')
+			f.flag_space = 1;
+		(*fmt)++;
 	}
-	if (**format == '.')
+	if (ft_isdigit(**fmt))
+	{
+		f.width = ft_atoi(*fmt);
+		while (ft_isdigit(**fmt))
+			(*fmt)++;
+	}
+	if (**fmt == '.')
 	{
 		f.precision_specified = 1;
-		(*format)++;
-		f.precision = ft_atoi(*format);
-		while (ft_isdigit(**format))
-			(*format)++;
+		(*fmt)++;
+		f.precision = ft_atoi(*fmt);
+		while (ft_isdigit(**fmt))
+			(*fmt)++;
 	}
-	if (ft_is_specifier(**format))
-		f.specifier = *(*format)++;
+	if (is_specifier(**fmt))
+		f.specifier = *(*fmt)++;
 	return (f);
 }

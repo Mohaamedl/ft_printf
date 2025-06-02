@@ -12,39 +12,6 @@
 
 #include "ft_printf.h"
 
-
-int	ft_print_padding(t_format *f, int n, int padding, int uppercase)
-{
-	int	count;
-
-	count = 0;
-	if (!f-> flag_minus && f->flag_zero && !f->precision_specified)
-	{
-            if (f->flag_hash && n != 0)
-			{
-				if (uppercase)
-					count +=write(1, "0X", 2);
-				else
-					count +=write(1, "0x", 2);
-			}
-            count += ft_putnchar('0', padding);
-        }
-        else
-        {
-            count += ft_putnchar(' ', padding);
-            if (f->flag_hash && n != 0)
-			{
-				if (uppercase)
-					count += write(1, "0X", 2);
-				else 
-					count += write(1, "0x", 2);
-			}
-        }
-    
-	return (count);
-}
-
-
 int ft_printhex(t_format *f, unsigned int n, int uppercase)
 {
     char *hex_digits = uppercase ? "0123456789ABCDEF" : "0123456789abcdef";
@@ -56,8 +23,6 @@ int ft_printhex(t_format *f, unsigned int n, int uppercase)
     int padding;
     int count = 0;
 
-    //fprintf(stderr, "[DEBUG] Printing hex: %x, uppercase=%d\n", n, uppercase);
-
     buffer[31] = '\0';
     if (n == 0 && (!f->precision_specified || f->precision != 0))
         buffer[i--] = '0';
@@ -67,13 +32,12 @@ int ft_printhex(t_format *f, unsigned int n, int uppercase)
         while (tmp > 0)
         {
             buffer[i--] = hex_digits[tmp % 16];
-
-		tmp /= 16;
+            tmp /= 16;
         }
     }
     char *num = &buffer[i + 1];
     num_len = ft_strlen(num);
-    if (f->precisionElementor #60_specified && f->precision == 0 && n == 0)
+    if (f->precision_specified && f->precision == 0 && n == 0)
         num_len = 0;
 
     precision_zeros = (f->precision_specified && f->precision > num_len) ? f->precision - num_len : 0;
@@ -81,7 +45,7 @@ int ft_printhex(t_format *f, unsigned int n, int uppercase)
     if (f->flag_hash && n != 0)
         total_len += 2;
     padding = (f->width > total_len) ? f->width - total_len : 0;
-	// add padding
+
     if (!f->flag_minus)
     {
         if (f->flag_zero && !f->precision_specified)

@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: mhaddadi <mhaddadi@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/27 13:53:20 by mhaddadi          #+#    #+#             */
-/*   Updated: 2025/05/27 13:54:49 by mhaddadi         ###   ########.fr       */
+/*   Created: 2025/05/05 14:23:22 by mhaddadi          #+#    #+#             */
+/*   Updated: 2025/05/05 14:29:47 by mhaddadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 char	*ft_uitoa(unsigned int n)
 {
-	char			buffer[11];
+	char			buffer[11]; // Max 10 digits + '\0'
 	int				i;
 	char			*res;
 
@@ -30,25 +30,3 @@ char	*ft_uitoa(unsigned int n)
 	res = ft_strdup(&buffer[i + 1]);
 	return (res);
 }
-/*
-
-#include <stdio.h>
-
-int main(void)
-{
-	printf("%s\n",ft_uitoa(42));
-	printf("%s\n",ft_uitoa(0));
-	printf("%s\n",ft_uitoa(2147483648));
-	printf("%s\n",ft_uitoa(4294967295));
-	//printf("%s",ft_uitoa(4294967296));
-	//printf("%s",ft_uitoa(9999999999));
-	printf("%s\n",ft_uitoa(00000));
-	printf("%s\n",ft_uitoa(000001));
-
-
-
-
-
-
-}
-*/

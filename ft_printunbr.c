@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_printunbr.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mhaddadi <mhaddadi@student.42porto.com>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/05 14:23:22 by mhaddadi          #+#    #+#             */
+/*   Updated: 2025/05/05 14:29:47 by mhaddadi         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "ft_printf.h"
 
 int ft_printunbr(t_format *f, unsigned int n)
@@ -9,8 +21,6 @@ int ft_printunbr(t_format *f, unsigned int n)
     int precision_zeros;
     int padding;
     int count = 0;
-
-    //fprintf(stderr, "[DEBUG] Printing uint: %u\n", n);
 
     if (!num)
         return (0);
@@ -38,6 +48,6 @@ int ft_printunbr(t_format *f, unsigned int n)
         count += ft_putnchar(' ', padding);
 
     free(to_free);
-    return (f->width > total_len ? f->width : total_len);
+    return (count);
 }
 

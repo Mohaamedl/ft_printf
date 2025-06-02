@@ -24,12 +24,12 @@ RM					= rm -rf
 #sources
 
 SRCS				= ft_printf.c ft_printnbr.c ft_printunbr.c ft_printchar.c \
-							ft_printnchar.c ft_printstr.c ft_parse_format.c ft_printptr \
-							ft_conversion_handler.c ft_printpercent.c ft_putnchar.c \
-							ft_printhex.c ft_printchar.c ft_uitoa.c
+							ft_putnchar.c ft_printstr.c ft_parse_format.c ft_printptr.c \
+							ft_conversion_handler.c ft_printpercent.c \
+							ft_printhex.c ft_uitoa.c
 
 OBJS_DIR			= objs
-OBJS				= $(SRCS :%.c=%.o)
+OBJS				= $(SRCS:.c=.o)
 
 LIBFT_PATH	= ./libft
 LIBFT				= $(LIBFT_PATH)/libft.a
