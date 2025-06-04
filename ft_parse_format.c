@@ -23,6 +23,24 @@ static int	is_specifier(char c)
 		|| c == 'x' || c == 'X' || c == '%');
 }
 
+static void	parse_fmt(t_format *f, const char **fmt)
+{
+	while (is_flag(**fmt))
+	{
+		if (**fmt == '-')
+			f->flag_minus = 1;
+		if (**fmt == '0')
+			f->flag_zero = 1;
+		if (**fmt == '#')
+			f->flag_hash = 1;
+		if (**fmt == '+')
+			f->flag_plus = 1;
+		if (**fmt == ' ')
+			f->flag_space = 1;
+		(*fmt)++;
+	}
+}
+
 t_format	ft_parse_format(const char **format)
 {
 	t_format	f;
@@ -30,20 +48,7 @@ t_format	ft_parse_format(const char **format)
 
 	fmt = (char **)format;
 	ft_bzero(&f, sizeof(t_format));
-	while (is_flag(**fmt))
-	{
-		if (**fmt == '-')
-			f.flag_minus = 1;
-		if (**fmt == '0')
-			f.flag_zero = 1;
-		if (**fmt == '#')
-			f.flag_hash = 1;
-		if (**fmt == '+')
-			f.flag_plus = 1;
-		if (**fmt == ' ')
-			f.flag_space = 1;
-		(*fmt)++;
-	}
+	parse_fmt(&f, format);
 	if (ft_isdigit(**fmt))
 	{
 		f.width = ft_atoi(*fmt);

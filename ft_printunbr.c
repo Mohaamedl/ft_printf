@@ -14,7 +14,7 @@
 
 static int	handle_unsigned_padding(t_format *f, int padding);
 static int	print_unsigned_with_format(t_format *f, char *num, int num_len,
-	unsigned int n);
+				unsigned int n);
 
 int	ft_printunbr(t_format *f, unsigned int n)
 {
@@ -73,4 +73,3 @@ static int	handle_unsigned_padding(t_format *f, int padding)
 	}
 	return (0);
 }
-

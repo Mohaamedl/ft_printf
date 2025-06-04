@@ -14,7 +14,8 @@
 
 static char	get_sign_char(t_format *f, int n);
 static int	print_number_content(t_format *f, char *num, int num_len, int n);
-static int	print_number_with_format(t_format *f, char *num, int num_len, int n);
+static int	print_number_with_format(t_format *f, char *num, int num_len,
+				int n);
 static int	calculate_total_width(t_format *f, int num_len, char sign_char);
 
 static char	get_sign_char(t_format *f, int n)

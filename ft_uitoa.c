@@ -14,7 +14,7 @@
 
 char	*ft_uitoa(unsigned int n)
 {
-	char			buffer[11]; // Max 10 digits + '\0'
+	char			buffer[11];
 	int				i;
 	char			*res;
 

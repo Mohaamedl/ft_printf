@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-/*
+
 #include "ft_printf.h"
 #include <stdio.h>
 #include <limits.h>
@@ -374,4 +374,3 @@ int main(void)
     return (g_test_count - g_pass_count);
 }
 
-*/

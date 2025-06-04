@@ -114,6 +114,7 @@ int	ft_printhex(t_format *f, unsigned int n, int uppercase)
 			count += ft_putnchar(' ', padding);
 			count += ft_print_hex_prefix(f, n, uppercase);
 		}
+		count += ft_print_hex_prefix(f, n, uppercase);
 	}
 	else
 		count += ft_print_hex_prefix(f, n, uppercase);
@@ -122,4 +123,3 @@ int	ft_printhex(t_format *f, unsigned int n, int uppercase)
 		count += ft_putnchar(' ', padding);
 	return (count);
 }
-
