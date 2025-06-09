@@ -14,21 +14,34 @@
 
 static void	ft_ptr_to_hex(uintptr_t addr, char *buffer)
 {
-	char	*hex_digits;
-	int		i;
+	char			*hex_digits;
+	int				len;
+	int				i;
+	uintptr_t		temp;
 
 	hex_digits = "0123456789abcdef";
-	i = 30;
-	buffer[31] = '\0';
 	if (addr == 0)
-		buffer[i--] = '0';
-	else
 	{
-		while (addr > 0)
-		{
-			buffer[i--] = hex_digits[addr % 16];
-			addr /= 16;
-		}
+		buffer[0] = '0';
+		buffer[1] = '\0';
+		return;
+	}
+
+	len = 0;
+	temp = addr;
+	while (temp > 0)
+	{
+		len++;
+		temp /= 16;
+	}
+
+	buffer[len] = '\0';
+	i = len - 1;
+	while (addr > 0)
+	{
+		buffer[i] = hex_digits[addr % 16];
+		addr /= 16;
+		i--;
 	}
 }
 
@@ -81,9 +94,7 @@ int	ft_printptr(t_format *f, void *ptr)
 	count = 0;
 	addr = (uintptr_t)ptr;
 	ft_ptr_to_hex(addr, buffer);
-	num = &buffer[0];
-	while (*num == '\0')
-		num++;
+	num = buffer;
 	if (!f->flag_minus)
 		count += ft_putnchar(' ', ft_calculate_ptr_padding(f, num, ptr));
 	count += write(1, "0x", 2);

@@ -17,20 +17,27 @@ int	ft_printstr(t_format *f, char *s)
 	int	len;
 	int	padding;
 	int	count;
+	int	is_null;
 
 	count = 0;
+	is_null = (s == NULL);
 	if (!s)
 		s = "(null)";
 	len = ft_strlen(s);
 	if (f->precision_specified && f->precision < len)
+	{
 		len = f->precision;
+		if (is_null && len < 6)
+			len = 0;
+	}
 	if (f->width > len)
 		padding = f->width - len;
 	else
 		padding = 0;
 	if (!f->flag_minus)
 		count += ft_putnchar(' ', padding);
-	count += write(1, s, len);
+	if (len > 0)
+		count += write(1, s, len);
 	if (f->flag_minus)
 		count += ft_putnchar(' ', padding);
 	return (count);

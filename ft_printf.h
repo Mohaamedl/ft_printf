@@ -53,6 +53,7 @@ int				ft_printptr(t_format *f, void *ptr);
 int				ft_printnbr(t_format *f, int n);
 int				ft_printunbr(t_format *f, unsigned int n);
 int				ft_printhex(t_format *f, unsigned int n, int uppercase);
+int				ft_printpercent(t_format *f);
 int				ft_putnchar(char c, int num);
 char			*ft_uitoa(unsigned int n);
 int				ft_calculate_hex_padding(t_format *f, char *num,

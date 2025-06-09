@@ -44,26 +44,24 @@ static void	parse_fmt(t_format *f, const char **fmt)
 t_format	ft_parse_format(const char **format)
 {
 	t_format	f;
-	char		**fmt;
 
-	fmt = (char **)format;
 	ft_bzero(&f, sizeof(t_format));
 	parse_fmt(&f, format);
-	if (ft_isdigit(**fmt))
+	if (ft_isdigit(**format))
 	{
-		f.width = ft_atoi(*fmt);
-		while (ft_isdigit(**fmt))
-			(*fmt)++;
+		f.width = ft_atoi(*format);
+		while (ft_isdigit(**format))
+			(*format)++;
 	}
-	if (**fmt == '.')
+	if (**format == '.')
 	{
 		f.precision_specified = 1;
-		(*fmt)++;
-		f.precision = ft_atoi(*fmt);
-		while (ft_isdigit(**fmt))
-			(*fmt)++;
+		(*format)++;
+		f.precision = ft_atoi(*format);
+		while (ft_isdigit(**format))
+			(*format)++;
 	}
-	if (is_specifier(**fmt))
-		f.specifier = *(*fmt)++;
+	if (is_specifier(**format))
+		f.specifier = *(*format)++;
 	return (f);
 }

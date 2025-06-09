@@ -30,6 +30,6 @@ int ft_conversion_handler(t_format *f, va_list ap)
 	else if (f->specifier == 'X')
 		return (ft_printhex(f, va_arg(ap, unsigned int), 1));
 	else if (f->specifier == '%')
-		return (ft_printchar(f, '%'));
+		return (ft_printpercent(f));
 	return (0);
 }

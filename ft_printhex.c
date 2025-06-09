@@ -14,24 +14,38 @@
 
 static void	ft_hex_to_buffer(unsigned int n, char *buffer, int uppercase)
 {
-	char	*hex_digits;
-	int		i;
+	char			*hex_digits;
+	int				len;
+	int				i;
+	unsigned int	temp;
 
-	i = 30;
-	buffer[31] = '\0';
 	if (uppercase)
 		hex_digits = "0123456789ABCDEF";
 	else
 		hex_digits = "0123456789abcdef";
+	
 	if (n == 0)
-		buffer[i--] = '0';
-	else
 	{
-		while (n > 0)
-		{
-			buffer[i--] = hex_digits[n % 16];
-			n /= 16;
-		}
+		buffer[0] = '0';
+		buffer[1] = '\0';
+		return;
+	}
+
+	len = 0;
+	temp = n;
+	while (temp > 0)
+	{
+		len++;
+		temp /= 16;
+	}
+
+	buffer[len] = '\0';
+	i = len - 1;
+	while (n > 0)
+	{
+		buffer[i] = hex_digits[n % 16];
+		n /= 16;
+		i--;
 	}
 }
 
@@ -98,10 +112,9 @@ int	ft_printhex(t_format *f, unsigned int n, int uppercase)
 
 	count = 0;
 	ft_hex_to_buffer(n, buffer, uppercase);
-	num = &buffer[0];
-	while (*num == '\0')
-		num++;
+	num = buffer;
 	padding = ft_calculate_hex_padding(f, num, n);
+	
 	if (!f->flag_minus)
 	{
 		if (f->flag_zero && !f->precision_specified)
@@ -112,14 +125,16 @@ int	ft_printhex(t_format *f, unsigned int n, int uppercase)
 		else
 		{
 			count += ft_putnchar(' ', padding);
-			count += ft_print_hex_prefix(f, n, uppercase);
 		}
-		count += ft_print_hex_prefix(f, n, uppercase);
 	}
-	else
+	
+	if (!f->flag_zero || f->precision_specified)
 		count += ft_print_hex_prefix(f, n, uppercase);
+		
 	count += ft_print_hex_content(f, num, n);
+	
 	if (f->flag_minus)
 		count += ft_putnchar(' ', padding);
+		
 	return (count);
 }
