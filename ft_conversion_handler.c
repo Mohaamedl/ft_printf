@@ -10,13 +10,12 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #include "ft_printf.h"
 
-int ft_conversion_handler(t_format *f, va_list ap)
+int	ft_conversion_handler(t_format *f, va_list ap)
 {
 	if (f->specifier == 'c')
-        return (ft_printchar(f, va_arg(ap, int)));
+		return (ft_printchar(f, va_arg(ap, int)));
 	else if (f->specifier == 's')
 		return (ft_printstr(f, va_arg(ap, char *)));
 	else if (f->specifier == 'p')

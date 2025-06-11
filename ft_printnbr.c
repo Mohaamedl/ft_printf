@@ -74,18 +74,12 @@ static int	print_number_with_format(t_format *f, char *num, int num_len, int n)
 		padding = f->width - calculate_total_width(f, num_len, sign_char);
 	else
 		padding = 0;
-	
-	// When precision is specified, always use space padding
 	if (!f->flag_minus && (f->precision_specified || !f->flag_zero))
 		count += ft_putnchar(' ', padding);
-	
 	if (sign_char)
 		count += write(1, &sign_char, 1);
-	
-	// Only use zero padding when no precision is specified and zero flag is set
 	if (!f->flag_minus && f->flag_zero && !f->precision_specified)
 		count += ft_putnchar('0', padding);
-	
 	count += print_number_content(f, num, num_len, n);
 	if (f->flag_minus)
 		count += ft_putnchar(' ', padding);

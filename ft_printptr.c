@@ -24,9 +24,8 @@ static void	ft_ptr_to_hex(uintptr_t addr, char *buffer)
 	{
 		buffer[0] = '0';
 		buffer[1] = '\0';
-		return;
+		return ;
 	}
-
 	len = 0;
 	temp = addr;
 	while (temp > 0)
@@ -34,7 +33,6 @@ static void	ft_ptr_to_hex(uintptr_t addr, char *buffer)
 		len++;
 		temp /= 16;
 	}
-
 	buffer[len] = '\0';
 	i = len - 1;
 	while (addr > 0)
@@ -103,4 +101,3 @@ int	ft_printptr(t_format *f, void *ptr)
 		count += ft_putnchar(' ', ft_calculate_ptr_padding(f, num, ptr));
 	return (count);
 }
-

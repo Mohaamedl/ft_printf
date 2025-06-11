@@ -52,6 +52,8 @@ $(LIBFT):
 $(OBJS_DIR):
 	mkdir -p $(OBJS_DIR)
 
+$()
+
 clean:
 	make -C $(LIBFT_PATH) clean
 	$(RM) $(OBJS)
@@ -60,6 +62,8 @@ fclean: clean
 	make -C $(LIBFT_PATH) fclean
 	$(RM) $(NAME)
 test : $(NAME)
+	git fetch originArch
+	git checkout FETCH_HEAD -- test.c
 	$(CC) $(CFLAGS) $(TEST) $(NAME) -o test
 		./test
 

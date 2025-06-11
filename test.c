@@ -28,20 +28,20 @@ int main(void)
 	uint = 4009990999;
 	str = "testing string printing";
 	printf("Integers\n");
-	std = printf("std : %d\n",pos);
-	ft = ft_printf("ft: %d\n",pos);
+	std = printf("std: %d\n",pos);
+	ft = ft_printf("ftf: %d\n",pos);
 	printf("Returns----\nft: %10d\nstd: %10d\n", std, ft);
 	
 
 	printf("Unsigned ints\n");
 	std = printf("std: %u\n",uint);
-	ft	= ft_printf("ft: %u\n",uint);
+	ft	= ft_printf("ftf: %u\n",uint);
 	printf("Returns----\nft: %10d\nstd: %10d\n", std, ft);
 	
 
 	printf("Strings\n");
 	std = printf("std: %s\n", str);
-	ft	= ft_printf("ft: %s\n", str);
+	ft	= ft_printf("ftf: %s\n", str);
 	printf("Returns----\nft: %10d\nstd: %10d\n", std, ft);
 	
 

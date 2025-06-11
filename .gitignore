@@ -12,9 +12,9 @@ a.out
 *.out
 
 # Test files
-test*
-*test*
-main.c
+#test*
+#*test*
+#main.c
 debug*
 
 # OS generated files
