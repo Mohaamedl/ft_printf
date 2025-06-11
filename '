@@ -28,9 +28,7 @@ SRCS				= ft_printf.c ft_printnbr.c ft_printunbr.c ft_printchar.c \
 							ft_conversion_handler.c ft_printpercent.c \
 							ft_printhex.c ft_uitoa.c
 
-TEST				= test.c
-
-OBJS_DIR		= objs
+OBJS_DIR			= objs
 OBJS				= $(SRCS:.c=.o)
 
 LIBFT_PATH	= ./libft
@@ -59,10 +57,10 @@ clean:
 fclean: clean
 	make -C $(LIBFT_PATH) fclean
 	$(RM) $(NAME)
-test : $(NAME)
-	$(CC) $(CFLAGS) $(TEST) $(NAME) -o test
+test :
+	make -C test.c $(NAME) -o test
 		./test
 
 re:fclean all
 
-.PHONY: all bonus clean fclean re libft
+.PHONY: all bonus clean fclean re libft test
