@@ -69,12 +69,14 @@ SRC = $(SRC_MAIN) $(SRC_LIBFT)
 OBJ_MAIN = $(SRC_MAIN:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)
 OBJ_LIBFT = $(SRC_LIBFT:$(LIBFT_DIR)/%.c=$(BUILD_DIR)/libft_%.o)
 OBJ = $(OBJ_MAIN) $(OBJ_LIBFT)
-
-build/main.o: test/main.c | build
+build/test_printf.o: test/test_printf.c | build
 	$(CC) $(CFLAGS) -I$(SRC_DIR) -I$(LIBFT_DIR) -Iunity/src -c $< -o $@
 
-build/test_utils.o: test/test_utils.c | build
-	$(CC) $(CFLAGS) -I$(SRC_DIR) -I$(LIBFT_DIR) -Iunity/src -c $< -o $@
+#build/main.o: test/main.c | build
+#	$(CC) $(CFLAGS) -I$(SRC_DIR) -I$(LIBFT_DIR) -Iunity/src -c $< -o $@
+
+#build/test_utils.o: test/test_utils.c | build
+#	$(CC) $(CFLAGS) -I$(SRC_DIR) -I$(LIBFT_DIR) -Iunity/src -c $< -o $@
 
 build/unity.o: unity/src/unity.c | build
 	$(CC) $(CFLAGS) -Iunity/src -c $< -o $@
