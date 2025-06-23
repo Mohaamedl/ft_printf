@@ -17,26 +17,29 @@
 #                                CONFIGURATION                                 #
 # **************************************************************************** #
 # === Project Configuration ===
-NAME        = libftprintf.a
-CC          = cc
-CFLAGS      = -Wall -Wextra -Werror
+NAME				=	libftprintf.a
+CC					=	cc
+CFLAGS			=	-Wall -Wextra -Werror
 
-SRC_DIR     = src
-LIBFT_DIR   = libft
-BUILD_DIR   = build
-TEST_EXEC = run_tests
+SRC_DIR     =	src
+LIBFT_DIR   =	libft
+BUILD_DIR   =	build
+TEST_EXEC		=	run_tests
+TEST_DIR		=	test
+UNITY_DIR		=	unity
+UNITY_URL		= https://github.com/ThrowTheSwitch/Unity.git
 
 TEST_SRC = \
-	test/test_printf.c
+	$(TEST_DIR)/test_printf.c
 
 UNITY_SRC = \
-	unity/src/unity.c
+	$(UNITY_DIR)/src/unity.c
 
 TEST_OBJ = \
-	build/test_printf.o
+	$(BUILD_DIR)/test_printf.o
 
 UNITY_OBJ = \
-	build/unity.o
+	$(BUILD_DIR)/unity.o
 
 # === Source Files ===
 
@@ -69,8 +72,9 @@ SRC = $(SRC_MAIN) $(SRC_LIBFT)
 OBJ_MAIN = $(SRC_MAIN:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)
 OBJ_LIBFT = $(SRC_LIBFT:$(LIBFT_DIR)/%.c=$(BUILD_DIR)/libft_%.o)
 OBJ = $(OBJ_MAIN) $(OBJ_LIBFT)
-build/test_printf.o: test/test_printf.c | build
-	$(CC) $(CFLAGS) -I$(SRC_DIR) -I$(LIBFT_DIR) -Iunity/src -c $< -o $@
+
+#build/test_printf.o: test/test_printf.c | build 
+#	$(CC) $(CFLAGS) -I$(SRC_DIR) -I$(LIBFT_DIR) -Iunity/src -c $< -o $@
 
 #build/main.o: test/main.c | build
 #	$(CC) $(CFLAGS) -I$(SRC_DIR) -I$(LIBFT_DIR) -Iunity/src -c $< -o $@
@@ -78,8 +82,8 @@ build/test_printf.o: test/test_printf.c | build
 #build/test_utils.o: test/test_utils.c | build
 #	$(CC) $(CFLAGS) -I$(SRC_DIR) -I$(LIBFT_DIR) -Iunity/src -c $< -o $@
 
-build/unity.o: unity/src/unity.c | build
-	$(CC) $(CFLAGS) -Iunity/src -c $< -o $@
+#build/unity.o: unity/src/unity.c | build
+#	$(CC) $(CFLAGS) -Iunity/src -c $< -o $@
 
 # === Rules ===
 
@@ -99,27 +103,36 @@ $(BUILD_DIR)/libft_%.o: $(LIBFT_DIR)/%.c | $(BUILD_DIR)
 $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
 
-test: pull_tests unity_init $(NAME) $(TEST_OBJ) $(UNITY_OBJ)
-	$(CC) $(CFLAGS) $(TEST_OBJ) $(UNITY_OBJ) $(NAME) -o $(TEST_EXEC)
+test: pull_tests unity_init $(NAME) $(TEST_OBJ) $(UNITY_OBJ) compile_tests
 	./$(TEST_EXEC)
+
+build/test_printf.o: test/test_printf.c | build 
+	$(CC) $(CFLAGS) -I$(SRC_DIR) -I$(LIBFT_DIR) -Iunity/src -c $< -o $@
+
+build/unity.o: unity/src/unity.c | build
+	$(CC) $(CFLAGS) -Iunity/src -c $< -o $@
+
+compile_tests:
+	$(CC) $(CFLAGS) $(TEST_OBJ) $(UNITY_OBJ) $(NAME) -o $(TEST_EXEC)
 
 pull_tests:
 	git fetch origin test
 	git checkout origin/test -- test
 
 unity_init:
-	git submodule update --init --recursive
+	git submodule add $(UNITY_URL) $(UNITY_DIR)
+	git submodule update --init --recursive unity
 
 clean:
 	rm -rf $(BUILD_DIR)
 
 fclean: clean clean_tests
 	rm -f $(NAME)
-
+	
 re: fclean all
 
 clean_tests:
-	rm -f $(TEST_EXEC) $(TEST_OBJ) $(UNITY_OBJ)
+	rm -fr $(TEST_EXEC) $(TEST_OBJ) $(UNITY_OBJ) $(TEST_DIR) $(BUILD_DIR) $(UNITY_DIR)
 
-.PHONY: all clean fclean re
+.PHONY: all clean fclean re test compile_tests clean_tests
 
