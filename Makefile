@@ -27,7 +27,7 @@ BUILD_DIR   =	build
 TEST_EXEC		=	run_tests
 TEST_DIR		=	test
 UNITY_DIR		=	unity
-
+UNITY_URL		= https://github.com/ThrowTheSwitch/Unity.git
 
 TEST_SRC = \
 	$(TEST_DIR)/test_printf.c
@@ -120,6 +120,7 @@ pull_tests:
 	git checkout origin/test -- test
 
 unity_init:
+	git submodule add $(UNITY_URL) $(UNITY_DIR)
 	git submodule update --init --recursive unity
 
 clean:
