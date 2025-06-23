@@ -9,64 +9,117 @@
 #    Updated: 2025/05/05 14:20:14 by mhaddadi         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
-
 # **************************************************************************** #
 #                              ft_printf MAKEFILE                              #
 # **************************************************************************** #
 
-NAME				= libftprintf.a
+# **************************************************************************** #
+#                                CONFIGURATION                                 #
+# **************************************************************************** #
+# === Project Configuration ===
+NAME        = libftprintf.a
+CC          = cc
+CFLAGS      = -Wall -Wextra -Werror
 
-CC					= cc
-CFLAGS			= -Wall -Wextra -Werror
-ARFLAGS			= rcs
-RM					= rm -rf
+SRC_DIR     = src
+LIBFT_DIR   = libft
+BUILD_DIR   = build
+TEST_EXEC = run_tests
 
-#sources
+TEST_SRC = \
+	test/test_printf.c
 
-SRCS				= ft_printf.c ft_printnbr.c ft_printunbr.c ft_printchar.c \
-							ft_putnchar.c ft_printstr.c ft_parse_format.c ft_printptr.c \
-							ft_conversion_handler.c ft_printpercent.c \
-							ft_printhex.c ft_uitoa.c
+UNITY_SRC = \
+	unity/src/unity.c
 
-TEST				= test.c
+TEST_OBJ = \
+	build/test_printf.o
 
-OBJS_DIR		= objs
-OBJS				= $(SRCS:.c=.o)
+UNITY_OBJ = \
+	build/unity.o
 
-LIBFT_PATH	= ./libft
-LIBFT				= $(LIBFT_PATH)/libft.a
+# === Source Files ===
 
-%.o : %.c
-	$(CC) -c $(CFLAGS) $^  -o $@
+SRC_MAIN = \
+	$(SRC_DIR)/ft_printf.c \
+	$(SRC_DIR)/ft_conversion_handler.c \
+	$(SRC_DIR)/ft_parse_format.c \
+	$(SRC_DIR)/ft_printchar.c \
+	$(SRC_DIR)/ft_printhex.c \
+	$(SRC_DIR)/ft_printnbr.c \
+	$(SRC_DIR)/ft_printpercent.c \
+	$(SRC_DIR)/ft_printptr.c \
+	$(SRC_DIR)/ft_printstr.c \
+	$(SRC_DIR)/ft_printunbr.c \
+	$(SRC_DIR)/ft_putnchar.c \
+	$(SRC_DIR)/ft_uitoa.c
+
+SRC_LIBFT = \
+	$(LIBFT_DIR)/ft_bzero.c \
+	$(LIBFT_DIR)/ft_isdigit.c \
+	$(LIBFT_DIR)/ft_atoi.c \
+	$(LIBFT_DIR)/ft_strlen.c \
+	$(LIBFT_DIR)/ft_strdup.c \
+	$(LIBFT_DIR)/ft_itoa.c
+
+SRC = $(SRC_MAIN) $(SRC_LIBFT)
+
+# === Object Files ===
+
+OBJ_MAIN = $(SRC_MAIN:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)
+OBJ_LIBFT = $(SRC_LIBFT:$(LIBFT_DIR)/%.c=$(BUILD_DIR)/libft_%.o)
+OBJ = $(OBJ_MAIN) $(OBJ_LIBFT)
+build/test_printf.o: test/test_printf.c | build
+	$(CC) $(CFLAGS) -I$(SRC_DIR) -I$(LIBFT_DIR) -Iunity/src -c $< -o $@
+
+#build/main.o: test/main.c | build
+#	$(CC) $(CFLAGS) -I$(SRC_DIR) -I$(LIBFT_DIR) -Iunity/src -c $< -o $@
+
+#build/test_utils.o: test/test_utils.c | build
+#	$(CC) $(CFLAGS) -I$(SRC_DIR) -I$(LIBFT_DIR) -Iunity/src -c $< -o $@
+
+build/unity.o: unity/src/unity.c | build
+	$(CC) $(CFLAGS) -Iunity/src -c $< -o $@
+
+# === Rules ===
 
 all: $(NAME)
 
 bonus: all
 
-$(NAME): $(LIBFT) $(OBJS)
-	cp	$(LIBFT) $(NAME)
-			ar $(ARFLAGS) $(NAME) $(OBJS)
+$(NAME): $(OBJ)
+	ar rcs $(NAME) $(OBJ)
 
-$(LIBFT): 
-	make -C $(LIBFT_PATH) all
-$(OBJS_DIR):
-	mkdir -p $(OBJS_DIR)
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c | $(BUILD_DIR)
+	$(CC) $(CFLAGS) -I$(LIBFT_DIR) -I$(SRC_DIR) -c $< -o $@
 
-$()
+$(BUILD_DIR)/libft_%.o: $(LIBFT_DIR)/%.c | $(BUILD_DIR)
+	$(CC) $(CFLAGS) -I$(LIBFT_DIR) -c $< -o $@
+
+$(BUILD_DIR):
+	mkdir -p $(BUILD_DIR)
+
+test: pull_tests unity_init $(NAME) $(TEST_OBJ) $(UNITY_OBJ)
+	$(CC) $(CFLAGS) $(TEST_OBJ) $(UNITY_OBJ) $(NAME) -o $(TEST_EXEC)
+	./$(TEST_EXEC)
+
+pull_tests:
+	git fetch origin test
+	git checkout origin/test -- test
+
+unity_init:
+	git submodule update --init --recursive
 
 clean:
-	make -C $(LIBFT_PATH) clean
-	$(RM) $(OBJS)
+	rm -rf $(BUILD_DIR)
 
-fclean: clean
-	make -C $(LIBFT_PATH) fclean
-	$(RM) $(NAME)
-test : $(NAME)
-	git fetch originArch
-	git checkout FETCH_HEAD -- test.c
-	$(CC) $(CFLAGS) $(TEST) $(NAME) -o test
-		./test
+fclean: clean clean_tests
+	rm -f $(NAME)
 
-re:fclean all
+re: fclean all
 
-.PHONY: all bonus clean fclean re libft
+clean_tests:
+	rm -f $(TEST_EXEC) $(TEST_OBJ) $(UNITY_OBJ)
+
+.PHONY: all clean fclean re
+
