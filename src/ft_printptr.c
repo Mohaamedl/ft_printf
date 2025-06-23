@@ -12,6 +12,20 @@
 
 #include "ft_printf.h"
 
+static char	*ft_hexa_string(uintptr_t iaddr, char *buffer)
+{
+	char	*hex_digits;
+
+	hex_digits = "0123456789abcdef";
+	if (addr == 0)
+	{
+		buffer[0] = '0';
+		buffer[1] = '\0';
+		return (' ');
+	}
+	return (hex_digits);
+}
+
 static void	ft_ptr_to_hex(uintptr_t addr, char *buffer)
 {
 	char			*hex_digits;
@@ -19,13 +33,9 @@ static void	ft_ptr_to_hex(uintptr_t addr, char *buffer)
 	int				i;
 	uintptr_t		temp;
 
-	hex_digits = "0123456789abcdef";
-	if (addr == 0)
-	{
-		buffer[0] = '0';
-		buffer[1] = '\0';
+	hex_digits = ft_hexa_string(addr, buffer);
+	if (hex_digit == ' ')
 		return ;
-	}
 	len = 0;
 	temp = addr;
 	while (temp > 0)
