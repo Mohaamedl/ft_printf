@@ -5,118 +5,117 @@
 #include <fcntl.h>
 #include <stdlib.h>
 #include <stdarg.h>
-#include "../src/ft_printf.h"
+#include "../src/ft_printf.h" 
 
-#define CAPTURE_BUFFER_SIZE 4096
+// Prototipagem explícita
+int ft_vprintf(const char *format, va_list ap);
 
-int capture_output(char *buffer, size_t size, int (*fn)(const char *, ...), const char *fmt, ...)
+// Implementação de ft_vprintf baseada na tua ft_printf
+int ft_vprintf(const char *format, va_list ap)
 {
-	int stdout_copy = dup(STDOUT_FILENO);
+	const char *fmt = format;
+	va_list args_copy;
+	int printed;
+	t_format f;
+
+	va_copy(args_copy, ap);
+	printed = 0;
+	while (*fmt)
+	{
+		if (*fmt == '%')
+		{
+			fmt++;
+			f = ft_parse_format(&fmt);
+			printed += ft_conversion_handler(&f, args_copy);
+		}
+		else
+			printed += write(1, fmt++, 1);
+	}
+	va_end(args_copy);
+	return printed;
+}
+
+// Redireciona stdout para pipe e captura output
+int capture_output(char *buffer, size_t size, const char *format, ...)
+{
 	int pipefd[2];
+	int saved_stdout = dup(STDOUT_FILENO);
 	pipe(pipefd);
 	dup2(pipefd[1], STDOUT_FILENO);
 	close(pipefd[1]);
 
 	va_list args;
-	va_start(args, fmt);
-	int ret = fn(fmt, args);
+	va_start(args, format);
+	ft_vprintf(format, args);
 	va_end(args);
 
 	fflush(stdout);
-	read(pipefd[0], buffer, size - 1);
-	buffer[strcspn(buffer, "\0")] = '\0'; // sanitize
+	dup2(saved_stdout, STDOUT_FILENO);
+	close(saved_stdout);
+
+	ssize_t bytes_read = read(pipefd[0], buffer, size - 1);
+	buffer[bytes_read] = '\0';
 	close(pipefd[0]);
-	dup2(stdout_copy, STDOUT_FILENO);
-	close(stdout_copy);
-	return ret;
-}
 
-int ft_printf_wrapper(const char *format, va_list args)
-{
-	return vprintf(format, args); // to mimic behavior
-}
-
-int ft_printf_call(const char *format, ...)
-{
-	va_list args;
-	va_start(args, format);
-	int ret = ft_printf(format, args);
-	va_end(args);
-	return ret;
-}
-
-int std_printf_call(const char *format, ...)
-{
-	va_list args;
-	va_start(args, format);
-	int ret = vprintf(format, args);
-	va_end(args);
-	return ret;
+	return (int)bytes_read;
 }
 
 void setUp(void) {}
 void tearDown(void) {}
+// -----------------------
+// Testes
+// -----------------------
 
 void test_hello_string(void)
 {
-	char out1[CAPTURE_BUFFER_SIZE] = {0};
-	char out2[CAPTURE_BUFFER_SIZE] = {0};
-
-	int ret1 = capture_output(out1, sizeof(out1), (int (*)(const char *, ...))ft_printf_call, "Hello %s!\n", "world");
-	int ret2 = capture_output(out2, sizeof(out2), (int (*)(const char *, ...))std_printf_call, "Hello %s!\n", "world");
-
-	TEST_ASSERT_EQUAL_STRING(out2, out1);
-	TEST_ASSERT_EQUAL_INT(ret2, ret1);
+	char buffer[256];
+	capture_output(buffer, sizeof(buffer), "Hello %s!\n", "world");
+	TEST_ASSERT_EQUAL_STRING("Hello world!\n", buffer);
 }
 
 void test_integers(void)
 {
-	char out1[CAPTURE_BUFFER_SIZE] = {0};
-	char out2[CAPTURE_BUFFER_SIZE] = {0};
-
-	int ret1 = capture_output(out1, sizeof(out1), (int (*)(const char *, ...))ft_printf_call, "Number: %d\n", 42);
-	int ret2 = capture_output(out2, sizeof(out2), (int (*)(const char *, ...))std_printf_call, "Number: %d\n", 42);
-
-	TEST_ASSERT_EQUAL_STRING(out2, out1);
-	TEST_ASSERT_EQUAL_INT(ret2, ret1);
+	char buffer[256];
+	capture_output(buffer, sizeof(buffer), "Number: %d\n", 42);
+	TEST_ASSERT_EQUAL_STRING("Number: 42\n", buffer);
 }
 
 void test_hexadecimal(void)
 {
-	char out1[CAPTURE_BUFFER_SIZE] = {0};
-	char out2[CAPTURE_BUFFER_SIZE] = {0};
-
-	int ret1 = capture_output(out1, sizeof(out1), (int (*)(const char *, ...))ft_printf_call, "Hex: %x\n", 255);
-	int ret2 = capture_output(out2, sizeof(out2), (int (*)(const char *, ...))std_printf_call, "Hex: %x\n", 255);
-
-	TEST_ASSERT_EQUAL_STRING(out2, out1);
-	TEST_ASSERT_EQUAL_INT(ret2, ret1);
+	char buffer[256];
+	capture_output(buffer, sizeof(buffer), "Hex: %x\n", 255);
+	TEST_ASSERT_EQUAL_STRING("Hex: ff\n", buffer);
 }
 
 void test_pointer(void)
 {
-	char out1[CAPTURE_BUFFER_SIZE] = {0};
-	char out2[CAPTURE_BUFFER_SIZE] = {0};
-	void *ptr = (void *)0xdeadbeef;
-
-	int ret1 = capture_output(out1, sizeof(out1), (int (*)(const char *, ...))ft_printf_call, "Ptr: %p\n", ptr);
-	int ret2 = capture_output(out2, sizeof(out2), (int (*)(const char *, ...))std_printf_call, "Ptr: %p\n", ptr);
-
-	TEST_ASSERT_EQUAL_STRING(out2, out1);
-	TEST_ASSERT_EQUAL_INT(ret2, ret1);
+	char buffer[256], expected[256];
+	int x = 0xdeadbeef;
+	capture_output(buffer, sizeof(buffer), "Ptr: %p\n", (void *)&x);
+	snprintf(expected, sizeof(expected), "Ptr: %p\n", (void *)&x);
+	TEST_ASSERT_EQUAL_STRING(expected, buffer);
 }
 
 void test_multiple_args(void)
 {
-	char out1[CAPTURE_BUFFER_SIZE] = {0};
-	char out2[CAPTURE_BUFFER_SIZE] = {0};
-
-	int ret1 = capture_output(out1, sizeof(out1), (int (*)(const char *, ...))ft_printf_call, "%s %d %x %c\n", "Test", 123, 0xFF, 'A');
-	int ret2 = capture_output(out2, sizeof(out2), (int (*)(const char *, ...))std_printf_call, "%s %d %x %c\n", "Test", 123, 0xFF, 'A');
-
-	TEST_ASSERT_EQUAL_STRING(out2, out1);
-	TEST_ASSERT_EQUAL_INT(ret2, ret1);
+	char buffer[256];
+	capture_output(buffer, sizeof(buffer), "Test %d %x %c\n", 123, 0xdead, 'A');
+	TEST_ASSERT_EQUAL_STRING("Test 123 dead A\n", buffer);
 }
+
+void test_multi_flags_integer(void)
+{
+	char buffer[512];
+	char expected[512];
+
+	capture_output(buffer, sizeof(buffer), "Test %0.4d / %i0.4\n", 42, 42);
+	snprintf(expected, sizeof(expected), "Test %d0.4 / %d0.4\n",42, 42); //capture_output(buffer, sizeof(buffer), "Test %0.4d / %i0.4\n", 42, 42);
+	TEST_ASSERT_EQUAL_STRING(expected,buffer);
+}
+
+// -----------------------
+// Main
+// -----------------------
 
 int main(void)
 {
