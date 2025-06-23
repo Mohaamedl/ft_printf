@@ -108,8 +108,8 @@ void test_multi_flags_integer(void)
 	char buffer[512];
 	char expected[512];
 
-	capture_output(buffer, sizeof(buffer), "Test %0.4d / %i0.4\n", 42, 42);
-	snprintf(expected, sizeof(expected), "Test %d0.4 / %d0.4\n",42, 42); //capture_output(buffer, sizeof(buffer), "Test %0.4d / %i0.4\n", 42, 42);
+	capture_output(buffer, sizeof(buffer), "Test %d0.4 / %i0.4\n", 42, 42);
+	snprintf(expected, sizeof(expected), "Test %d0.4 / %i0.4\n",42, 42); //capture_output(buffer, sizeof(buffer), "Test %0.4d / %i0.4\n", 42, 42);
 	TEST_ASSERT_EQUAL_STRING(expected,buffer);
 }
 
@@ -125,6 +125,7 @@ int main(void)
 	RUN_TEST(test_hexadecimal);
 	RUN_TEST(test_pointer);
 	RUN_TEST(test_multiple_args);
+	RUN_TEST(test_multi_flags_integer);
 	return UNITY_END();
 }
 
