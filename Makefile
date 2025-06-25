@@ -55,7 +55,8 @@ SRC_MAIN = \
 	$(SRC_DIR)/ft_printstr.c \
 	$(SRC_DIR)/ft_printunbr.c \
 	$(SRC_DIR)/ft_putnchar.c \
-	$(SRC_DIR)/ft_uitoa.c
+	$(SRC_DIR)/ft_uitoa.c \
+	$(SRC_DIR)/ft_hex_helper.c
 
 SRC_LIBFT = \
 	$(LIBFT_DIR)/ft_bzero.c \

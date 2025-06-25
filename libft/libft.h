@@ -6,7 +6,7 @@
 /*   By: mhaddadi <mhaddadi@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 16:20:38 by mhaddadi          #+#    #+#             */
-/*   Updated: 2025/04/22 16:20:53 by mhaddadi         ###   ########.fr       */
+/*   Updated: 2025/06/25 19:57:28 by mhaddadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,10 +100,10 @@ void			ft_putnbr_fd(int n, int fd);
 
 /* Linked list management */
 t_list			*ft_lstnew(void *content);
-void			ft_lstadd_front(t_list **lst, t_list *new);
+void			ft_lstadd_front(t_list **lst, t_list *newl);
 int				ft_lstsize(t_list *lst);
 t_list			*ft_lstlast(t_list *lst);
-void			ft_lstadd_back(t_list **lst, t_list *new);
+void			ft_lstadd_back(t_list **lst, t_list *newl);
 void			ft_lstdelone(t_list *lst, void (*del)(void *));
 void			ft_lstclear(t_list **lst, void (*del)(void *));
 void			ft_lstiter(t_list *lst, void (*f)(void *));

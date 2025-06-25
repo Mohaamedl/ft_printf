@@ -6,45 +6,11 @@
 /*   By: mhaddadi <mhaddadi@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/27 13:43:54 by mhaddadi          #+#    #+#             */
-/*   Updated: 2025/05/27 13:47:31 by mhaddadi         ###   ########.fr       */
+/*   Updated: 2025/06/25 19:59:30 by mhaddadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
-
-static void	ft_hex_to_buffer(unsigned int n, char *buffer, int uppercase)
-{
-	char			*hex_digits;
-	int				len;
-	int				i;
-	unsigned int	temp;
-
-	if (uppercase)
-		hex_digits = "0123456789ABCDEF";
-	else
-		hex_digits = "0123456789abcdef";
-	if (n == 0)
-	{
-		buffer[0] = '0';
-		buffer[1] = '\0';
-		return ;
-	}
-	len = 0;
-	temp = n;
-	while (temp > 0)
-	{
-		len++;
-		temp /= 16;
-	}
-	buffer[len] = '\0';
-	i = len - 1;
-	while (n > 0)
-	{
-		buffer[i] = hex_digits[n % 16];
-		n /= 16;
-		i--;
-	}
-}
 
 static int	ft_print_hex_prefix(t_format *f, unsigned int n, int uppercase)
 {
@@ -119,9 +85,7 @@ int	ft_printhex(t_format *f, unsigned int n, int uppercase)
 			count += ft_putnchar('0', padding);
 		}
 		else
-		{
 			count += ft_putnchar(' ', padding);
-		}
 	}
 	if (!f->flag_zero || f->precision_specified)
 		count += ft_print_hex_prefix(f, n, uppercase);

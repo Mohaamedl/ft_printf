@@ -6,7 +6,7 @@
 /*   By: mhaddadi <mhaddadi@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 10:27:06 by mhaddadi          #+#    #+#             */
-/*   Updated: 2025/05/19 10:27:06 by mhaddadi         ###   ########.fr       */
+/*   Updated: 2025/06/25 19:58:34 by mhaddadi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,5 +59,6 @@ char			*ft_uitoa(unsigned int n);
 int				ft_calculate_hex_padding(t_format *f, char *num,
 					unsigned int n);
 int				ft_print_ptr_content(t_format *f, char *num, void *ptr);
+void			ft_hex_to_buffer(unsigned int n, char *buffer, int uppercase);
 
 #endif
