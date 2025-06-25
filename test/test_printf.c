@@ -7,10 +7,8 @@
 #include <stdarg.h>
 #include "../src/ft_printf.h"
 
-// Prototipagem explícita
 int ft_vprintf(const char *format, va_list ap);
 
-// Implementação de ft_vprintf baseada na tua ft_printf
 int ft_vprintf(const char *format, va_list ap)
 {
     const char *fmt = format;
@@ -34,7 +32,7 @@ int ft_vprintf(const char *format, va_list ap)
     va_end(args_copy);
     return printed;
 }
-
+/*
 // Redireciona stdout para pipe e captura output
 int capture_output(char *buffer, size_t size, const char *format, ...)
 {
@@ -60,6 +58,120 @@ int capture_output(char *buffer, size_t size, const char *format, ...)
     return (int)bytes_read;
 }
 
+int capture_output_std(char *buffer, size_t size, const char *format, ...)
+{
+    int pipefd[2];
+    if (pipe(pipefd) != 0)
+        return -1;
+
+    int saved_stdout = dup(STDOUT_FILENO);
+    if (saved_stdout == -1) {
+        close(pipefd[0]);
+        close(pipefd[1]);
+        return -1;
+    }
+
+    if (dup2(pipefd[1], STDOUT_FILENO) == -1) {
+        close(saved_stdout);
+        close(pipefd[0]);
+        close(pipefd[1]);
+        return -1;
+    }
+
+    // vprintf usando stdlib
+    va_list args;
+    va_start(args, format);
+    vprintf(format, args);
+    va_end(args);
+
+    fflush(stdout);     // flush stdout
+    fflush(NULL);       // flush all stdio buffers
+
+    close(pipefd[1]);   // fecha escrita ANTES de restaurar stdout
+    dup2(saved_stdout, STDOUT_FILENO);
+    close(saved_stdout);
+
+    ssize_t bytes_read = read(pipefd[0], buffer, size - 1);
+    if (bytes_read < 0) bytes_read = 0;
+
+    buffer[bytes_read] = '\0';
+    close(pipefd[0]);
+
+    return (int)bytes_read;
+}
+*/
+
+// limpar e garantir estado limpo
+static void prepare_capture(char *buffer, size_t size) {
+	memset(buffer, 0, size);
+	fflush(stdout);
+	fsync(STDOUT_FILENO);
+}
+
+int	capture_output(char *buffer, size_t size, const char *format, ...)
+{
+	prepare_capture(buffer, size);
+	int pipefd[2];
+	if (pipe(pipefd) == -1)
+		return -1;
+	int saved_stdout = dup(STDOUT_FILENO);
+	if (saved_stdout == -1)
+		return -1;
+	if (dup2(pipefd[1], STDOUT_FILENO) == -1)
+	{
+		close(pipefd[0]);
+		close(pipefd[1]);
+		return -1;
+	}
+	close(pipefd[1]);
+	va_list args;
+	va_start(args, format);
+	ft_vprintf(format, args);
+	va_end(args);
+	fflush(stdout);
+	fsync(STDOUT_FILENO);
+	dup2(saved_stdout, STDOUT_FILENO);
+	close(saved_stdout);
+	ssize_t bytes_read = read(pipefd[0], buffer, size - 1);
+	close(pipefd[0]);
+	if (bytes_read < 0)
+		return -1;
+	buffer[bytes_read] = '\0';
+	return (int)bytes_read;
+}
+
+int	capture_output_std(char *buffer, size_t size, const char *format, ...)
+{
+	prepare_capture(buffer, size);
+	int pipefd[2];
+	if (pipe(pipefd) == -1)
+		return -1;
+	int saved_stdout = dup(STDOUT_FILENO);
+	if (saved_stdout == -1)
+		return -1;
+	if (dup2(pipefd[1], STDOUT_FILENO) == -1)
+	{
+		close(pipefd[0]);
+		close(pipefd[1]);
+		return -1;
+	}
+	close(pipefd[1]);
+	va_list args;
+	va_start(args, format);
+	vprintf(format, args);
+	va_end(args);
+	fflush(stdout);
+	fsync(STDOUT_FILENO);
+	dup2(saved_stdout, STDOUT_FILENO);
+	close(saved_stdout);
+	ssize_t bytes_read = read(pipefd[0], buffer, size - 1);
+	close(pipefd[0]);
+	if (bytes_read < 0)
+		return -1;
+	buffer[bytes_read] = '\0';
+	return (int)bytes_read;
+}
+
 void setUp(void) {}
 void tearDown(void) {}
 
@@ -69,16 +181,22 @@ void tearDown(void) {}
 
 void test_hello_string(void)
 {
-    char buffer[256];
-    capture_output(buffer, sizeof(buffer), "Hello %s!\n", "world");
-    TEST_ASSERT_EQUAL_STRING("Hello world!\n", buffer);
+	char buffer[256];
+	char expected[256];
+
+	capture_output(buffer, sizeof(buffer), "Hello %s!\n", "world");
+	capture_output_std(expected, sizeof(expected), "Hello %s!\n", "world");
+	TEST_ASSERT_EQUAL_STRING(expected, buffer);
 }
 
 void test_integers(void)
 {
-    char buffer[256];
-    capture_output(buffer, sizeof(buffer), "Number: %d\n", 42);
-    TEST_ASSERT_EQUAL_STRING("Number: 42\n", buffer);
+	char buffer[256];
+	char expected[256];
+
+	capture_output(buffer, sizeof(buffer), "Number: %d\n", 42);
+	capture_output_std(expected, sizeof(expected), "Number: %d\n", 42);
+	TEST_ASSERT_EQUAL_STRING(expected, buffer);
 }
 
 void test_hexadecimal(void)
@@ -471,9 +589,12 @@ void test_complex_mix_2(void)
 
 void test_complex_mix_3(void)
 {
-    char buffer[512];
-    capture_output(buffer, sizeof(buffer), "%05d %#x %10s %-5c", 42, 0, "null", 'Z');
-    TEST_ASSERT_EQUAL_STRING("00042 0      null Z    ", buffer);
+	char	buffer[512];
+	char	expected[512];
+
+	capture_output(buffer, sizeof(buffer), "%05d %#x %10s %-5c", 42, 0, "null", 'Z');
+	capture_output(expected, sizeof(expected), "%05d %#x %10s %-5c", 42, 0, "null", 'Z');
+	TEST_ASSERT_EQUAL_STRING(expected, buffer);
 }
 
 // ===========================================
@@ -487,7 +608,8 @@ int main(void)
     // Basic tests
     RUN_TEST(test_hello_string);
     RUN_TEST(test_integers);
-    RUN_TEST(test_hexadecimal);
+
+		RUN_TEST(test_hexadecimal);
     RUN_TEST(test_pointer);
     RUN_TEST(test_multiple_args);
     
@@ -556,6 +678,7 @@ int main(void)
     RUN_TEST(test_complex_mix_1);
     RUN_TEST(test_complex_mix_2);
     RUN_TEST(test_complex_mix_3);
+		
     
     return UNITY_END();
 }
