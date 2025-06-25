@@ -1,3 +1,16 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   test_printf.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mhaddadi <mhaddadi@student.42porto.com>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/06/25 19:40:18 by mhaddadi          #+#    #+#             */
+/*   Updated: 2025/06/25 19:40:53 by mhaddadi         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+/*
+
 #include "../unity/src/unity.h"
 #include <stdio.h>
 #include <string.h>
@@ -32,75 +45,6 @@ int ft_vprintf(const char *format, va_list ap)
     va_end(args_copy);
     return printed;
 }
-/*
-// Redireciona stdout para pipe e captura output
-int capture_output(char *buffer, size_t size, const char *format, ...)
-{
-    int pipefd[2];
-    int saved_stdout = dup(STDOUT_FILENO);
-    pipe(pipefd);
-    dup2(pipefd[1], STDOUT_FILENO);
-    close(pipefd[1]);
-
-    va_list args;
-    va_start(args, format);
-    ft_vprintf(format, args);
-    va_end(args);
-
-    fflush(stdout);
-    dup2(saved_stdout, STDOUT_FILENO);
-    close(saved_stdout);
-
-    ssize_t bytes_read = read(pipefd[0], buffer, size - 1);
-    buffer[bytes_read] = '\0';
-    close(pipefd[0]);
-
-    return (int)bytes_read;
-}
-
-int capture_output_std(char *buffer, size_t size, const char *format, ...)
-{
-    int pipefd[2];
-    if (pipe(pipefd) != 0)
-        return -1;
-
-    int saved_stdout = dup(STDOUT_FILENO);
-    if (saved_stdout == -1) {
-        close(pipefd[0]);
-        close(pipefd[1]);
-        return -1;
-    }
-
-    if (dup2(pipefd[1], STDOUT_FILENO) == -1) {
-        close(saved_stdout);
-        close(pipefd[0]);
-        close(pipefd[1]);
-        return -1;
-    }
-
-    // vprintf usando stdlib
-    va_list args;
-    va_start(args, format);
-    vprintf(format, args);
-    va_end(args);
-
-    fflush(stdout);     // flush stdout
-    fflush(NULL);       // flush all stdio buffers
-
-    close(pipefd[1]);   // fecha escrita ANTES de restaurar stdout
-    dup2(saved_stdout, STDOUT_FILENO);
-    close(saved_stdout);
-
-    ssize_t bytes_read = read(pipefd[0], buffer, size - 1);
-    if (bytes_read < 0) bytes_read = 0;
-
-    buffer[bytes_read] = '\0';
-    close(pipefd[0]);
-
-    return (int)bytes_read;
-}
-*/
-
 // limpar e garantir estado limpo
 static void prepare_capture(char *buffer, size_t size) {
 	memset(buffer, 0, size);
@@ -201,25 +145,28 @@ void test_integers(void)
 
 void test_hexadecimal(void)
 {
-    char buffer[256];
+	char buffer[256], expected[256];
     capture_output(buffer, sizeof(buffer), "Hex: %x\n", 255);
-    TEST_ASSERT_EQUAL_STRING("Hex: ff\n", buffer);
+    capture_output_std(expected, sizeof(expected), "Hex: %x\n", 255);
+    TEST_ASSERT_EQUAL_STRING(expected, buffer);
 }
 
 void test_pointer(void)
 {
-    char buffer[256], expected[256];
+	char buffer[256], expected[256];
     int x = 0xdeadbeef;
     capture_output(buffer, sizeof(buffer), "Ptr: %p\n", (void *)&x);
     snprintf(expected, sizeof(expected), "Ptr: %p\n", (void *)&x);
-    TEST_ASSERT_EQUAL_STRING(expected, buffer);
+	TEST_ASSERT_EQUAL_STRING(expected, buffer);
 }
 
 void test_multiple_args(void)
 {
-    char buffer[256];
+	char buffer[256], expected[256];
     capture_output(buffer, sizeof(buffer), "Test %d %x %c\n", 123, 0xdead, 'A');
-    TEST_ASSERT_EQUAL_STRING("Test 123 dead A\n", buffer);
+    capture_output_std(expected, sizeof(expected), "Test %d %x %c\n", 123, 0xdead, 'A');
+	TEST_ASSERT_EQUAL_STRING(expected, buffer);
+
 }
 
 // ===========================================
@@ -228,37 +175,46 @@ void test_multiple_args(void)
 
 void test_string_precision_basic(void)
 {
-    char buffer[256];
+	char buffer[256], expected[256];
     capture_output(buffer, sizeof(buffer), "%.3s", "hello");
-    TEST_ASSERT_EQUAL_STRING("hel", buffer);
+    capture_output_std(expected, sizeof(expected), "%.3s", "hello");
+	TEST_ASSERT_EQUAL_STRING(expected, buffer);
 }
 
 void test_string_precision_zero(void)
 {
-    char buffer[256];
+	char buffer[256], expected[256];
     capture_output(buffer, sizeof(buffer), "%.0s", "hello");
-    TEST_ASSERT_EQUAL_STRING("", buffer);
+	capture_output_std(expected, sizeof(expected), "%.0s", "hello");
+
+    TEST_ASSERT_EQUAL_STRING(expected, buffer);
 }
 
 void test_string_precision_larger(void)
 {
-    char buffer[256];
+	char buffer[256], expected[256];
     capture_output(buffer, sizeof(buffer), "%.10s", "hello");
-    TEST_ASSERT_EQUAL_STRING("hello", buffer);
+    capture_output_std(expected, sizeof(expected), "%.10s", "hello");
+
+	TEST_ASSERT_EQUAL_STRING(expected, buffer);
 }
 
 void test_string_precision_null(void)
 {
-    char buffer[256];
+	char buffer[256], expected[256];
     capture_output(buffer, sizeof(buffer), "%.3s", (char *)NULL);
-    TEST_ASSERT_EQUAL_STRING("", buffer);
+	capture_output_std(expected, sizeof(expected), "%.3s", (char *)NULL);
+
+    TEST_ASSERT_EQUAL_STRING(expected, buffer);
 }
 
 void test_string_precision_null_full(void)
 {
-    char buffer[256];
+	char buffer[256], expected[256];
     capture_output(buffer, sizeof(buffer), "%.10s", (char *)NULL);
-    TEST_ASSERT_EQUAL_STRING("(null)", buffer);
+    capture_output_std(expected, sizeof(expected), "%.10s", (char *)NULL);
+
+	TEST_ASSERT_EQUAL_STRING(expected, buffer);
 }
 
 // ===========================================
@@ -267,37 +223,47 @@ void test_string_precision_null_full(void)
 
 void test_string_width_right(void)
 {
-    char buffer[256];
+	char buffer[256], expected[256];
     capture_output(buffer, sizeof(buffer), "%10s", "hello");
-    TEST_ASSERT_EQUAL_STRING("     hello", buffer);
+    capture_output_std(expected, sizeof(expected), "%10s", "hello");
+
+	TEST_ASSERT_EQUAL_STRING(expected, buffer);
 }
 
 void test_string_width_left(void)
 {
-    char buffer[256];
+	char buffer[256], expected[256];
     capture_output(buffer, sizeof(buffer), "%-10s", "hello");
-    TEST_ASSERT_EQUAL_STRING("hello     ", buffer);
+	capture_output_std(expected, sizeof(expected), "%-10s", "hello");
+
+    TEST_ASSERT_EQUAL_STRING(expected, buffer);
 }
 
 void test_integer_width_right(void)
 {
-    char buffer[256];
+	char buffer[256], expected[256];
     capture_output(buffer, sizeof(buffer), "%5d", 42);
-    TEST_ASSERT_EQUAL_STRING("   42", buffer);
+	capture_output_std(expected, sizeof(expected), "%5d", 42);
+
+    TEST_ASSERT_EQUAL_STRING(expected, buffer);
 }
 
 void test_integer_width_left(void)
 {
-    char buffer[256];
+	char buffer[256], expected[256];
     capture_output(buffer, sizeof(buffer), "%-5d", 42);
-    TEST_ASSERT_EQUAL_STRING("42   ", buffer);
+    capture_output_std(expected, sizeof(expected), "%-5d", 42);
+
+	TEST_ASSERT_EQUAL_STRING(expected, buffer);
 }
 
 void test_integer_width_zero(void)
 {
-    char buffer[256];
+	char buffer[256], expected[256];
     capture_output(buffer, sizeof(buffer), "%05d", 42);
-    TEST_ASSERT_EQUAL_STRING("00042", buffer);
+    capture_output_std(expected, sizeof(expected), "%05d", 42);
+
+	TEST_ASSERT_EQUAL_STRING(expected, buffer);
 }
 
 // ===========================================
@@ -306,44 +272,56 @@ void test_integer_width_zero(void)
 
 void test_integer_precision_basic(void)
 {
-    char buffer[256];
+	char buffer[256], expected[256]; 
     capture_output(buffer, sizeof(buffer), "%.5d", 42);
-    TEST_ASSERT_EQUAL_STRING("00042", buffer);
+    capture_output_std(expected, sizeof(expected), "%.5d", 42);
+
+	TEST_ASSERT_EQUAL_STRING(expected, buffer);
 }
 
 void test_integer_precision_zero_value(void)
 {
-    char buffer[256];
+	char buffer[256], expected[256];
     capture_output(buffer, sizeof(buffer), "%.0d", 0);
-    TEST_ASSERT_EQUAL_STRING("", buffer);
+    capture_output_std(expected, sizeof(expected), "%.0d", 0);
+
+	TEST_ASSERT_EQUAL_STRING(expected, buffer);
 }
 
 void test_integer_precision_negative(void)
 {
-    char buffer[256];
+	char buffer[256], expected[256];
     capture_output(buffer, sizeof(buffer), "%.5d", -42);
-    TEST_ASSERT_EQUAL_STRING("-00042", buffer);
+    capture_output_std(expected, sizeof(expected), "%.5d", -42);
+
+	TEST_ASSERT_EQUAL_STRING(expected, buffer);
 }
 
 void test_hex_precision(void)
 {
-    char buffer[256];
+	char buffer[256], expected[256];
     capture_output(buffer, sizeof(buffer), "%.5x", 255);
-    TEST_ASSERT_EQUAL_STRING("000ff", buffer);
+    capture_output_std(expected, sizeof(expected), "%.5x", 255);
+
+	TEST_ASSERT_EQUAL_STRING(expected, buffer);
 }
 
 void test_hex_precision_upper(void)
 {
-    char buffer[256];
+	char buffer[256], expected[256];
     capture_output(buffer, sizeof(buffer), "%.5X", 255);
-    TEST_ASSERT_EQUAL_STRING("000FF", buffer);
+    capture_output_std(expected, sizeof(expected), "%.5X", 255);
+
+	TEST_ASSERT_EQUAL_STRING(expected, buffer);
 }
 
 void test_unsigned_precision(void)
 {
-    char buffer[256];
+	char buffer[256], expected[256];
     capture_output(buffer, sizeof(buffer), "%.5u", 42);
-    TEST_ASSERT_EQUAL_STRING("00042", buffer);
+	capture_output_std(expected, sizeof(expected), "%.5u", 42);
+
+    TEST_ASSERT_EQUAL_STRING(expected, buffer);
 }
 
 // ===========================================
@@ -352,37 +330,47 @@ void test_unsigned_precision(void)
 
 void test_string_width_precision(void)
 {
-    char buffer[256];
+	char buffer[256], expected[256];
     capture_output(buffer, sizeof(buffer), "%10.3s", "hello");
-    TEST_ASSERT_EQUAL_STRING("       hel", buffer);
+	capture_output_std(expected, sizeof(expected), "%10.3s", "hello");
+
+    TEST_ASSERT_EQUAL_STRING(expected, buffer);
 }
 
 void test_string_width_precision_left(void)
 {
-    char buffer[256];
+	char buffer[256], expected[256];
     capture_output(buffer, sizeof(buffer), "%-10.3s", "hello");
-    TEST_ASSERT_EQUAL_STRING("hel       ", buffer);
+	capture_output_std(expected, sizeof(expected), "%-10.3s", "hello");
+
+    TEST_ASSERT_EQUAL_STRING(expected, buffer);
 }
 
 void test_integer_width_precision(void)
 {
-    char buffer[256];
+	char buffer[256], expected[256];
     capture_output(buffer, sizeof(buffer), "%10.5d", 42);
-    TEST_ASSERT_EQUAL_STRING("     00042", buffer);
+	capture_output_std(expected, sizeof(expected), "%10.5d", 42);
+
+    TEST_ASSERT_EQUAL_STRING(expected, buffer);
 }
 
 void test_integer_width_precision_left(void)
 {
-    char buffer[256];
+	char buffer[256], expected[256]; 
     capture_output(buffer, sizeof(buffer), "%-10.5d", 42);
-    TEST_ASSERT_EQUAL_STRING("00042     ", buffer);
+	capture_output_std(expected, sizeof(expected), "%-10.5d", 42);
+
+    TEST_ASSERT_EQUAL_STRING(expected, buffer);
 }
 
 void test_hex_width_precision(void)
 {
-    char buffer[256];
+	char buffer[256], expected[256]; 
+	capture_output_std(expected, sizeof(expected), "%10.5x", 255);
+
     capture_output(buffer, sizeof(buffer), "%10.5x", 255);
-    TEST_ASSERT_EQUAL_STRING("     000ff", buffer);
+    TEST_ASSERT_EQUAL_STRING(expected, buffer);
 }
 
 // ===========================================
@@ -391,51 +379,66 @@ void test_hex_width_precision(void)
 
 void test_integer_plus_flag(void)
 {
-    char buffer[256];
+	char buffer[256], expected[256];
+	capture_output_std(expected, sizeof(expected), "%+d", 42);
+
     capture_output(buffer, sizeof(buffer), "%+d", 42);
-    TEST_ASSERT_EQUAL_STRING("+42", buffer);
+    TEST_ASSERT_EQUAL_STRING(expected, buffer);
 }
 
 void test_integer_plus_flag_negative(void)
 {
-    char buffer[256];
+	char buffer[256], expected[256]; 
+capture_output_std(expected, sizeof(expected), "%+d", -42);
+
     capture_output(buffer, sizeof(buffer), "%+d", -42);
-    TEST_ASSERT_EQUAL_STRING("-42", buffer);
+    TEST_ASSERT_EQUAL_STRING(expected, buffer);
 }
 
 void test_integer_space_flag(void)
 {
-    char buffer[256];
+	char buffer[256], expected[256]; 
+	capture_output_std(expected, sizeof(expected), "% d", 42);
+
     capture_output(buffer, sizeof(buffer), "% d", 42);
-    TEST_ASSERT_EQUAL_STRING(" 42", buffer);
+    TEST_ASSERT_EQUAL_STRING(expected, buffer);
 }
 
 void test_integer_space_flag_negative(void)
 {
-    char buffer[256];
-    capture_output(buffer, sizeof(buffer), "% d", -42);
-    TEST_ASSERT_EQUAL_STRING("-42", buffer);
+	char buffer[256], expected[256]; 
+    capture_output_std(expected, sizeof(expected), "% d", -42);
+
+	capture_output(buffer, sizeof(buffer), "% d", -42);
+    TEST_ASSERT_EQUAL_STRING(expected, buffer);
 }
 
 void test_hex_hash_flag(void)
 {
-    char buffer[256];
+	char buffer[256], expected[256];
     capture_output(buffer, sizeof(buffer), "%#x", 255);
-    TEST_ASSERT_EQUAL_STRING("0xff", buffer);
+	capture_output_std(expected, sizeof(expected), "%#x", 255);
+
+    TEST_ASSERT_EQUAL_STRING(expected, buffer);
 }
 
 void test_hex_hash_flag_upper(void)
 {
-    char buffer[256];
+	char buffer[256], expected[256]; 
+
     capture_output(buffer, sizeof(buffer), "%#X", 255);
-    TEST_ASSERT_EQUAL_STRING("0XFF", buffer);
+	capture_output_std(expected, sizeof(expected), "%#X", 255);
+
+    TEST_ASSERT_EQUAL_STRING(expected, buffer);
 }
 
 void test_hex_hash_flag_zero(void)
 {
-    char buffer[256];
+     char buffer[256], expected[256]; 
+	capture_output_std(expected, sizeof(expected), "%#x", 0);
+
     capture_output(buffer, sizeof(buffer), "%#x", 0);
-    TEST_ASSERT_EQUAL_STRING("0", buffer);
+    TEST_ASSERT_EQUAL_STRING(expected, buffer);
 }
 
 // ===========================================
@@ -444,37 +447,46 @@ void test_hex_hash_flag_zero(void)
 
 void test_plus_width_precision(void)
 {
-    char buffer[256];
+    char buffer[256], expected[256]; 
+	capture_output_std(expected, sizeof(expected), "%+10.5d", 42);
+
     capture_output(buffer, sizeof(buffer), "%+10.5d", 42);
-    TEST_ASSERT_EQUAL_STRING("    +00042", buffer);
+    TEST_ASSERT_EQUAL_STRING(expected, buffer);
 }
 
 void test_space_width_precision(void)
 {
-    char buffer[256];
+    char buffer[256], expected[256]; 
+	capture_output_std(expected, sizeof(expected), "% 10.5d", 42);
+
     capture_output(buffer, sizeof(buffer), "% 10.5d", 42);
-    TEST_ASSERT_EQUAL_STRING("     00042", buffer);
+    TEST_ASSERT_EQUAL_STRING(expected, buffer);
 }
 
 void test_hash_width_precision_hex(void)
 {
-    char buffer[256];
+    char buffer[256], expected[256]; 
+	capture_output_std(expected, sizeof(expected), "%#10.5x", 255);
     capture_output(buffer, sizeof(buffer), "%#10.5x", 255);
-    TEST_ASSERT_EQUAL_STRING("   0x000ff", buffer);
+    TEST_ASSERT_EQUAL_STRING(expected, buffer);
 }
 
 void test_zero_width_precision_ignored(void)
 {
-    char buffer[256];
-    capture_output(buffer, sizeof(buffer), "%010.5d", 42);
-    TEST_ASSERT_EQUAL_STRING("     00042", buffer);  // Zero flag ignored with precision
+    char buffer[256], expected[256]; 
+	capture_output(buffer, sizeof(buffer), "%010.5d", 42);
+    capture_output_std(expected, sizeof(expected), "%010.5d", 42);
+
+	TEST_ASSERT_EQUAL_STRING(expected, buffer);  // Zero flag ignored with precision
 }
 
 void test_minus_plus_width(void)
 {
-    char buffer[256];
-    capture_output(buffer, sizeof(buffer), "%-+10d", 42);
-    TEST_ASSERT_EQUAL_STRING("+42       ", buffer);
+   char buffer[256], expected[256]; 
+    capture_output_std(expected, sizeof(expected), "%-+10d", 42);
+
+	capture_output(buffer, sizeof(buffer), "%-+10d", 42);
+    TEST_ASSERT_EQUAL_STRING(expected, buffer);
 }
 
 // ===========================================
@@ -483,44 +495,54 @@ void test_minus_plus_width(void)
 
 void test_character_basic(void)
 {
-    char buffer[256];
-    capture_output(buffer, sizeof(buffer), "%c", 'A');
-    TEST_ASSERT_EQUAL_STRING("A", buffer);
+    char buffer[256], expected[256];
+    capture_output_std(expected, sizeof(expected), "%c", 'A');
+
+	capture_output(buffer, sizeof(buffer), "%c", 'A');
+    TEST_ASSERT_EQUAL_STRING(expected, buffer);
 }
 
 void test_character_width(void)
 {
-    char buffer[256];
+    char buffer[256], expected[256];
     capture_output(buffer, sizeof(buffer), "%5c", 'A');
-    TEST_ASSERT_EQUAL_STRING("    A", buffer);
+	capture_output_std(expected, sizeof(expected), "%5c", 'A');
+
+    TEST_ASSERT_EQUAL_STRING(expected, buffer);
 }
 
 void test_character_width_left(void)
 {
-    char buffer[256];
+    char buffer[256], expected[256];
     capture_output(buffer, sizeof(buffer), "%-5c", 'A');
-    TEST_ASSERT_EQUAL_STRING("A    ", buffer);
+	capture_output_std(expected, sizeof(expected), "%-5c", 'A');
+
+    TEST_ASSERT_EQUAL_STRING(expected, buffer);
 }
 
 void test_percent_basic(void)
 {
-    char buffer[256];
+    char buffer[256], expected[256];
     capture_output(buffer, sizeof(buffer), "%%");
-    TEST_ASSERT_EQUAL_STRING("%", buffer);
+    capture_output_std(expected, sizeof(expected), "%%");
+
+	TEST_ASSERT_EQUAL_STRING(expected, buffer);
 }
 
 void test_percent_width(void)
 {
-    char buffer[256];
+    char buffer[256], expected[256];
     capture_output(buffer, sizeof(buffer), "%5%");
-    TEST_ASSERT_EQUAL_STRING("    %", buffer);
+    capture_output_std(expected, sizeof(expected), "%5%");
+    TEST_ASSERT_EQUAL_STRING(expected, buffer);
 }
 
 void test_percent_width_left(void)
 {
-    char buffer[256];
-    capture_output(buffer, sizeof(buffer), "%-5%");
-    TEST_ASSERT_EQUAL_STRING("%    ", buffer);
+    char buffer[256], expected[256];
+	capture_output(buffer, sizeof(buffer), "%-5%");
+	capture_output_std(expected, sizeof(expected), "%-5%");
+    TEST_ASSERT_EQUAL_STRING(expected, buffer);
 }
 
 // ===========================================
@@ -529,44 +551,55 @@ void test_percent_width_left(void)
 
 void test_edge_case_zero_precision(void)
 {
-    char buffer[256];
+    char buffer[256], expected[256];
     capture_output(buffer, sizeof(buffer), "%.0d %.0u %.0x", 0, 0u, 0u);
-    TEST_ASSERT_EQUAL_STRING("  ", buffer);
+	capture_output_std(expected, sizeof(expected), "%.0d %.0u %.0x", 0, 0u, 0u);
+
+    TEST_ASSERT_EQUAL_STRING(expected, buffer);
 }
 
 void test_edge_case_int_max(void)
 {
-    char buffer[256];
+    char buffer[256], expected[256];
     capture_output(buffer, sizeof(buffer), "%d", 2147483647);
-    TEST_ASSERT_EQUAL_STRING("2147483647", buffer);
+	capture_output_std(expected, sizeof(expected), "%d", 2147483647);
+
+    TEST_ASSERT_EQUAL_STRING(expected, buffer);
 }
 
 void test_edge_case_int_min(void)
 {
-    char buffer[256];
+    char buffer[256], expected[256];
     capture_output(buffer, sizeof(buffer), "%d", -2147483648);
-    TEST_ASSERT_EQUAL_STRING("-2147483648", buffer);
+	capture_output_std(expected, sizeof(expected), "%d", -2147483648);
+
+    TEST_ASSERT_EQUAL_STRING(expected, buffer);
 }
 
 void test_edge_case_uint_max(void)
 {
-    char buffer[256];
+    char buffer[256], expected[256];
     capture_output(buffer, sizeof(buffer), "%u", 4294967295u);
-    TEST_ASSERT_EQUAL_STRING("4294967295", buffer);
+	capture_output_std(expected, sizeof(expected),"%u", 4294967295u);
+
+    TEST_ASSERT_EQUAL_STRING(expected, buffer);
 }
 
 void test_edge_case_null_pointer(void)
 {
-    char buffer[256];
+    char buffer[256], expected[256];
     capture_output(buffer, sizeof(buffer), "%p", (void *)NULL);
-    TEST_ASSERT_EQUAL_STRING("(nil)", buffer);
+	capture_output_std(expected, sizeof(expected), "%p", (void *)NULL);
+
+    TEST_ASSERT_EQUAL_STRING(expected, buffer);
 }
 
 void test_edge_case_empty_string(void)
 {
-    char buffer[256];
+    char buffer[256], expected[256];
     capture_output(buffer, sizeof(buffer), "%s", "");
-    TEST_ASSERT_EQUAL_STRING("", buffer);
+	capture_output_std(expected, sizeof(expected), "%s", "");
+    TEST_ASSERT_EQUAL_STRING(expected, buffer);
 }
 
 // ===========================================
@@ -575,16 +608,18 @@ void test_edge_case_empty_string(void)
 
 void test_complex_mix_1(void)
 {
-    char buffer[512];
-    capture_output(buffer, sizeof(buffer), "%+10.5d %-#8.3x %.6s", 42, 255, "hello");
-    TEST_ASSERT_EQUAL_STRING("    +00042 0x0ff    hello ", buffer);
+	char buffer[512], expected[512];
+	capture_output(buffer, sizeof(buffer), "%+10.5d %-#8.3x %.6s", 42, 255, "hello");
+	capture_output_std(expected, sizeof(expected), "%+10.5d %-#8.3x %.6s", 42, 255, "hello");
+	TEST_ASSERT_EQUAL_STRING(expected, buffer);
 }
 
 void test_complex_mix_2(void)
 {
-    char buffer[512];
-    capture_output(buffer, sizeof(buffer), "% 8.3d %#-10.4X %10.2s", -42, 4095, "test");
-    TEST_ASSERT_EQUAL_STRING("    -042 0X0FFF     te        ", buffer);
+	char buffer[512], expected[512];
+	capture_output(buffer, sizeof(buffer), "% 8.3d %#-10.4X %10.2s", -42, 4095, "test");
+	capture_output_std(expected, sizeof(expected), "% 8.3d %#-10.4X %10.2s", -42, 4095, "test");
+	TEST_ASSERT_EQUAL_STRING(expected, buffer);
 }
 
 void test_complex_mix_3(void)
@@ -593,7 +628,7 @@ void test_complex_mix_3(void)
 	char	expected[512];
 
 	capture_output(buffer, sizeof(buffer), "%05d %#x %10s %-5c", 42, 0, "null", 'Z');
-	capture_output(expected, sizeof(expected), "%05d %#x %10s %-5c", 42, 0, "null", 'Z');
+	capture_output_std(expected, sizeof(expected), "%05d %#x %10s %-5c", 42, 0, "null", 'Z');
 	TEST_ASSERT_EQUAL_STRING(expected, buffer);
 }
 
@@ -609,7 +644,7 @@ int main(void)
     RUN_TEST(test_hello_string);
     RUN_TEST(test_integers);
 
-		RUN_TEST(test_hexadecimal);
+	RUN_TEST(test_hexadecimal);
     RUN_TEST(test_pointer);
     RUN_TEST(test_multiple_args);
     
@@ -677,9 +712,8 @@ int main(void)
     // Complex mixed tests
     RUN_TEST(test_complex_mix_1);
     RUN_TEST(test_complex_mix_2);
-    RUN_TEST(test_complex_mix_3);
-		
-    
+	RUN_TEST(test_complex_mix_3);	
+
     return UNITY_END();
 }
-
+*/

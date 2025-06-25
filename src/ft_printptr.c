@@ -12,7 +12,7 @@
 
 #include "ft_printf.h"
 
-static char	*ft_hexa_string(uintptr_t iaddr, char *buffer)
+static char	*ft_hexa_string(uintptr_t addr, char *buffer)
 {
 	char	*hex_digits;
 
@@ -21,7 +21,7 @@ static char	*ft_hexa_string(uintptr_t iaddr, char *buffer)
 	{
 		buffer[0] = '0';
 		buffer[1] = '\0';
-		return (' ');
+		return (" ");
 	}
 	return (hex_digits);
 }
@@ -34,7 +34,7 @@ static void	ft_ptr_to_hex(uintptr_t addr, char *buffer)
 	uintptr_t		temp;
 
 	hex_digits = ft_hexa_string(addr, buffer);
-	if (hex_digit == ' ')
+	if (*hex_digits == ' ')
 		return ;
 	len = 0;
 	temp = addr;

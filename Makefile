@@ -113,7 +113,7 @@ build/unity.o: unity/src/unity.c | build
 	$(CC) $(CFLAGS) -Iunity/src -c $< -o $@
 
 compile_tests:
-	$(CC) $(CFLAGS) $(TEST_OBJ) $(UNITY_OBJ) $(NAME) -o $(TEST_EXEC)
+	$(CC) $(CFLAGS) $(TEST_SRC) $(UNITY_OBJ) $(NAME) -o $(TEST_EXEC)
 
 pull_tests:
 	git fetch origin test
