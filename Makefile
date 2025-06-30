@@ -117,7 +117,8 @@ compile_tests:
 	$(CC) $(CFLAGS) $(TEST_SRC) $(UNITY_OBJ) $(NAME) -o $(TEST_EXEC)
 
 pull_tests:
-	git remote set-url originHome https://github.com/Mohaamedl/ft_printf.git
+#	git remote set-url originHome https://github.com/Mohaamedl/ft_printf.git
+	git remote add originHome https://github.com/Mohaamedl/ft_printf.git
 	git fetch originHome main
 	git checkout originHome/main -- test unity 
 
