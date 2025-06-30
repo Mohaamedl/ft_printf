@@ -122,9 +122,10 @@ pull_tests:
 	git fetch originHome main
 	git checkout originHome/main -- test unity 
 
-unity_init:
-#	git submodule add $(UNITY_URL) $(UNITY_DIR) 
-#	git submodule update --init --recursive $(UNITY_DIR)
+unity_init:	
+	git rm -rf $(UNITY_DIR) 
+	git submodule add $(UNITY_URL) $(UNITY_DIR) 
+	git submodule update --init --recursive $(UNITY_DIR)
 
 
 $(UNITY_DIR):
