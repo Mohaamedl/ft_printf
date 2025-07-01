@@ -71,7 +71,12 @@ bonus: all
 
 $(NAME): $(OBJ)
 	$(MAKE) -C $(LIBFT_DIR)
-	ar rcs $(NAME) $(OBJ)
+	ar rcs l$(NAME) $(OBJ)
+	ar x l$(NAME)
+	ar x $(LIBFT_DIR)/libft.a
+	ar rcs $(NAME) *.o
+
+
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c | $(BUILD_DIR)
 	$(CC) $(CFLAGS) -I$(LIBFT_DIR) -I$(SRC_DIR) -c $< -o $@
