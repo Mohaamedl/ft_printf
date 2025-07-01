@@ -96,7 +96,10 @@ bonus: all
 
 $(NAME): $(OBJ)
 	$(MAKE) -C $(LIBFT)
-	ar rcs $(NAME) $(OBJ)
+	ar rcs $(NAME)l $(OBJ)
+	ar x $(NAME)l
+	ar x libft/libft.a
+	ar rcs $(NAME) *.o
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c | $(BUILD_DIR)
 	$(CC) $(CFLAGS) -I$(LIBFT) -c $< -o $@
