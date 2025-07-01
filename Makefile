@@ -72,15 +72,13 @@ bonus: all
 $(NAME): $(OBJ)
 	$(MAKE) -C $(LIBFT_DIR)
 	ar rcs l$(NAME) $(OBJ)
-	ar x l$(NAME)
-	ar x $(LIBFT_DIR)/libft.a
-	ar rcs $(NAME) *.o
-
-
+	ar x l$(NAME) && mv *.o $(BUILD_DIR)
+	ar x $(LIBFT_DIR)/libft.a && mv *.o $(BUILD_DIR)
+	ar rcs $(NAME) $(BUILD_DIR)/*.o
+	rm -f l$(NAME)
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c | $(BUILD_DIR)
 	$(CC) $(CFLAGS) -I$(LIBFT_DIR) -I$(SRC_DIR) -c $< -o $@
-
 
 $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
@@ -106,7 +104,6 @@ unity_init:
 	git rm -rf $(UNITY_DIR) 
 	git submodule add $(UNITY_URL) $(UNITY_DIR) 
 	git submodule update --init --recursive $(UNITY_DIR)
-
 
 $(UNITY_DIR):
 	mkdir -p $(UNITY_DIR)
