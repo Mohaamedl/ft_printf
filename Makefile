@@ -43,7 +43,7 @@ UNITY_OBJ = \
 
 # === Source Files ===
 
-SRC_MAIN = \
+SRC = \
 	$(SRC_DIR)/ft_printf.c \
 	$(SRC_DIR)/ft_conversion_handler.c \
 	$(SRC_DIR)/ft_parse_format.c \
@@ -58,33 +58,10 @@ SRC_MAIN = \
 	$(SRC_DIR)/ft_uitoa.c \
 	$(SRC_DIR)/ft_hex_helper.c
 
-SRC_LIBFT = \
-	$(LIBFT_DIR)/ft_bzero.c \
-	$(LIBFT_DIR)/ft_isdigit.c \
-	$(LIBFT_DIR)/ft_atoi.c \
-	$(LIBFT_DIR)/ft_strlen.c \
-	$(LIBFT_DIR)/ft_strdup.c \
-	$(LIBFT_DIR)/ft_itoa.c
-
-SRC = $(SRC_MAIN) $(SRC_LIBFT)
 
 # === Object Files ===
 
-OBJ_MAIN = $(SRC_MAIN:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)
-OBJ_LIBFT = $(SRC_LIBFT:$(LIBFT_DIR)/%.c=$(BUILD_DIR)/libft_%.o)
-OBJ = $(OBJ_MAIN) $(OBJ_LIBFT)
-
-#build/test_printf.o: test/test_printf.c | build 
-#	$(CC) $(CFLAGS) -I$(SRC_DIR) -I$(LIBFT_DIR) -Iunity/src -c $< -o $@
-
-#build/main.o: test/main.c | build
-#	$(CC) $(CFLAGS) -I$(SRC_DIR) -I$(LIBFT_DIR) -Iunity/src -c $< -o $@
-
-#build/test_utils.o: test/test_utils.c | build
-#	$(CC) $(CFLAGS) -I$(SRC_DIR) -I$(LIBFT_DIR) -Iunity/src -c $< -o $@
-
-#build/unity.o: unity/src/unity.c | build
-#	$(CC) $(CFLAGS) -Iunity/src -c $< -o $@
+OBJ = $(SRC:$(SRC_DIR)/%.c=$(BUILD_DIR)/%.o)
 
 # === Rules ===
 
@@ -93,13 +70,12 @@ all: $(NAME)
 bonus: all
 
 $(NAME): $(OBJ)
+	$(MAKE) -C $(LIBFT_DIR)
 	ar rcs $(NAME) $(OBJ)
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c | $(BUILD_DIR)
 	$(CC) $(CFLAGS) -I$(LIBFT_DIR) -I$(SRC_DIR) -c $< -o $@
 
-$(BUILD_DIR)/libft_%.o: $(LIBFT_DIR)/%.c | $(BUILD_DIR)
-	$(CC) $(CFLAGS) -I$(LIBFT_DIR) -c $< -o $@
 
 $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
@@ -114,10 +90,9 @@ build/unity.o: unity/src/unity.c | build
 	$(CC) $(CFLAGS) -Iunity/src -c $< -o $@
 
 compile_tests:
-	$(CC) $(CFLAGS) $(TEST_SRC) $(UNITY_OBJ) $(NAME) -o $(TEST_EXEC)
+	$(CC) $(CFLAGS) $(TEST_SRC) $(UNITY_OBJ) $(NAME) $(LIBFT_DIR)/libft.a -o $(TEST_EXEC)
 
 pull_tests:
-#	git remote set-url originHome https://github.com/Mohaamedl/ft_printf.git
 	git remote add originHome https://github.com/Mohaamedl/ft_printf.git
 	git fetch originHome main
 	git checkout originHome/main -- test unity 
@@ -136,6 +111,7 @@ clean:
 
 fclean: clean clean_tests
 	rm -f $(NAME)
+	$(MAKE) -C $(LIBFT_DIR) fclean
 	
 re: fclean all
 
@@ -143,4 +119,3 @@ clean_tests:
 	rm -fr $(TEST_EXEC) $(TEST_OBJ) $(UNITY_OBJ) $(TEST_DIR) $(BUILD_DIR) $(UNITY_DIR)
 
 .PHONY: all clean fclean re test compile_tests clean_tests
-
